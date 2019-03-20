@@ -65,8 +65,11 @@ configuration.addBrowser( 1500, 800, BrowserType.FIREFOX );
 * Create configuration file to pass in the virtual grid configurations.
 * Multithread/process the sitemap creation to speed it up.
 * Add additional checks/actions to a sitemap.
-   * e.g: ```<url>
-                <loc>https://www.seleniumconf.com/</loc>
-                <action>driver.findElement(By.tagName('button')).click();</action>
-                <check>eyes.checkElementBy(By.css("div.section"), null, "Example")</check>
-             </url>````
+   * e.g: 
+   ```
+   <url>
+      <loc>https://www.seleniumconf.com/</loc>
+      <action>driver.findElement(By.tagName('button')).click();</action>
+      <check>eyes.checkElementBy(By.css("div.section"), null, "Example")</check>
+   </url>
+   ```
