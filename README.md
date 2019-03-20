@@ -32,7 +32,7 @@ Options:
 
 * Set an environment variable for your Applitools API Key. e.g. export APPLITOOLS_API_KEY="Your_API_KEY"
 
-* Generate Sitemap and Run: `$ crawler.js -u https://seleniumconf.com`
+* Generate Sitemap and Run: `$ node crawler.js -u https://www.seleniumconf.com`
 * Set API Key and On-Prem/Private Cloud and Run: `$ node crawler.js -u https://seleniumconf.com -k YourApiKey -v https://youreyes.applitools.com`
 * Use existing sitemap.xml and Run: `$ node crawler.js -s ./sitemaps/www.seleniumconf.com.xml`
 * Use a self made sitemap and Run: `$ node crawler.js -s ./sitemaps/random-sitemap.xml`
@@ -44,7 +44,7 @@ Options:
 * Enable Applitools Debug logs: `$ node crawler.js -s ./sitemaps/www.seleniumconf.com.xml --log`
 * Run Chrome Headless: `$ node crawler.js -s ./sitemaps/www.seleniumconf.com.xml --headless`
 
-### Notes
+### Notes:
 
 * Quit during mid-execution:
    * ctrl-c only once! This should put you in the FINALLY block to kill the execution and close all browsers. Repeated ctrl-c might leave zombie browsers running on your pc which you'll have to manually kill. 

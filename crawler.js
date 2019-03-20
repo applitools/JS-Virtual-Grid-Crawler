@@ -8,7 +8,7 @@ async function SitemapGenerator(url, maxUrls) {
    const SitemapGenerator = require('sitemap-generator');
    
    var host = urlParser.parse(url).host;
-   var filepath = './' + host + '.xml';
+   var filepath = './sitemaps/' + host + '.xml';
 
    var generator = SitemapGenerator(url, {
    	maxDepth: 0,
