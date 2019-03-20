@@ -59,7 +59,7 @@ configuration.addBrowser( 1500, 800, BrowserType.CHROME  );
 configuration.addBrowser( 1500, 800, BrowserType.FIREFOX );
 ```
 
-###ToDos:
+### ToDos:
 
 * Create configuration file to pass in the virtual grid configurations.
 * Multithread/process the sitemap creation to speed it up.
