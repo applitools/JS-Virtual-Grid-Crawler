@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://www.seleniumconf.com/</loc>
+  </url>
+  <url>
+    <loc>https://www.seleniumconf.com/2/</loc>
+  </url>
+  <url>
+    <loc>https://www.seleniumconf.com/code_of_conduct/</loc>
+  </url>
+  <url>
+    <loc>https://www.seleniumconf.com/london/2019/02/27/accouncing-london/</loc>
+  </url>
+  <url>
+    <loc>https://www.seleniumconf.com/chicago/announcement/2018/07/30/seconf-chicago-lineup-announced/</loc>
+  </url>
+  <url>
+    <loc>https://www.seleniumconf.com/announcements/2018/03/22/speak-easy/</loc>
+  </url>
+  <url>
+    <loc>https://www.seleniumconf.com/announcements/2018/02/22/new-home-for-conference-sites/</loc>
+  </url>
+  <url>
+    <loc>https://www.seleniumconf.com/berlin/playlist/2017/10/13/seconf-berlin-playlist/</loc>
+  </url>
+  <url>
+    <loc>https://www.seleniumconf.com/austin/playlist/2017/04/07/seconf-austin-playlist/</loc>
+  </url>
+</urlset>
