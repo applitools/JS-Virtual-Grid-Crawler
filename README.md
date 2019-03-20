@@ -4,8 +4,8 @@
 
 ### To Install:
 
-* $ ```git clone git@github.com:applitools/JS-Virtual-Grid-Crawler.git```
-* $ ``` npm install```
+* ```$ git clone git@github.com:applitools/JS-Virtual-Grid-Crawler.git```
+* ```$ npm install```
 
 ### To Run:
 
