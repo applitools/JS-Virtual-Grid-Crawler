@@ -39,7 +39,7 @@ Options:
 * Use a sitemap.xml URL and Run: `$ node crawler.js -m https://www.wunderlist.com/sitemap.xml`
 * Open 20 browsers concurrently (default: 10): `$ node crawler.js -s ./sitemaps/www.seleniumconf.com.xml -b 20`
    * The max browsers by default is 10. However, if the sitemap.xml only has 5 links, then only 5 browsers will open.
-   * Be careful of this. Opening too many browsers might kill your machine. Leave it at the default and tweak this value slightly until you know the ideal number your machine can handle.
+   * ***Be careful with this value***. Opening too many browsers might kill your machine. Leave it at the default (10) and tweak this value slightly until you know the ideal number your machine can handle.
 * Disable Visual Grid and Run locally: `$ node crawler.js -s ./sitemaps/www.seleniumconf.com.xml --no-grid`
 * Enable Applitools Debug logs: `$ node crawler.js -s ./sitemaps/www.seleniumconf.com.xml --log`
 * Run Chrome Headless: `$ node crawler.js -s ./sitemaps/www.seleniumconf.com.xml --headless`
