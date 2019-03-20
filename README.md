@@ -36,7 +36,7 @@ Options:
 * Set API Key and On-Prem/Private Cloud and Run: `$ node crawler.js -u https://seleniumconf.com -k YourApiKey -v https://youreyes.applitools.com`
 * Use existing sitemap.xml and Run: `$ node crawler.js -s ./sitemaps/www.seleniumconf.com.xml`
 * Use a self made sitemap and Run: `$ node crawler.js -s ./sitemaps/random-sitemap.xml`
-* Open 20 browsers concurrently (default: 10): `$ node crawler.js -s ./sitemaps/www.seleniumconf.com.xml -b 20`
+* Open 20 browsers concurrently (default: 10): `$ node crawler.js -s ./sitemaps/www.primerica.com.xml -b 20`
    * The max browsers by default is 10. However, if the sitemap.xml only has 5 links, then only 5 browsers will open.
    * ***Be careful with this value***. Opening too many browsers might kill your machine. Leave it at the default (10) and tweak this value slightly until you know the ideal number your machine can handle.
 * Disable Visual Grid and Run locally: `$ node crawler.js -s ./sitemaps/www.seleniumconf.com.xml --no-grid`
