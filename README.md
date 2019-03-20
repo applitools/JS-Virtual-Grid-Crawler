@@ -33,7 +33,7 @@ Options:
 * Set an environment variable for your Applitools API Key. e.g. export APPLITOOLS_API_KEY="Your_API_KEY"
 
 * Generate Sitemap and Run: `$ node crawler.js -u https://www.seleniumconf.com`
-* Set API Key and On-Prem/Private Cloud and Run: `$ node crawler.js -u https://seleniumconf.com -k YourApiKey -v https://youreyes.applitools.com`
+* Use a sitemap.xml URL and Run: `$ node crawler.js -m https://slack.com/sitemap.xml -b 20 --headless`
 * Use existing sitemap.xml and Run: `$ node crawler.js -s ./sitemaps/www.seleniumconf.com.xml`
 * Use a self made sitemap and Run: `$ node crawler.js -s ./sitemaps/random-sitemap.xml`
 * Open 20 browsers concurrently (default: 10): `$ node crawler.js -s ./sitemaps/www.primerica.com.xml -b 20`
@@ -42,6 +42,7 @@ Options:
 * Disable Visual Grid and Run locally: `$ node crawler.js -s ./sitemaps/www.seleniumconf.com.xml --no-grid`
 * Enable Applitools Debug logs: `$ node crawler.js -s ./sitemaps/www.seleniumconf.com.xml --log`
 * Run Chrome Headless: `$ node crawler.js -s ./sitemaps/www.seleniumconf.com.xml --headless`
+* Overides: Set API Key and On-Prem/Private Cloud Server URL and Run: `$ node crawler.js -u https://seleniumconf.com -k YourApiKey -v https://youreyes.applitools.com`
 
 ### Notes:
 
