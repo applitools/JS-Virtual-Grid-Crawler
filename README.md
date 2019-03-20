@@ -47,7 +47,7 @@ Options:
 ### Notes:
 
 * Quit during mid-execution:
-   * ctrl-c only once! This should put you in the FINALLY block to kill the execution and close all browsers. Repeated ctrl-c might leave zombie browsers running on your pc which you'll have to manually kill. 
+   * ctrl-c only once and wait a bit! This should put you in the FINALLY block to kill the execution and close all browsers. Repeated ctrl-c might leave zombie browsers running on your pc which you'll have to manually kill. 
 
 ### VG Hardcoded Options:
 
