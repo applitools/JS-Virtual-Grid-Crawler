@@ -71,21 +71,21 @@ async function browser(url) {
    const {Builder, By, until} = require('selenium-webdriver');
    
    const { ConsoleLogHandler, Region, TestResults, GeneralUtils, MatchLevel } = require('@applitools/eyes-sdk-core');
-   const { Eyes, Target, SeleniumConfiguration, BrowserType, StitchMode, DeviceName, ScreenOrientation, BatchInfo } = require('@applitools/eyes-selenium');
+   const { Eyes, Target, VisualGridRunner, BrowserType, StitchMode, DeviceName, ScreenOrientation, batchId, BatchInfo } = require('@applitools/eyes-selenium');
    
    var expect = require('chai').expect;
 	
    try {
       
-      var eyes = new Eyes(enableVisualGrid);
+      //var eyes = new Eyes(enableVisualGrid);
+      const eyes = new Eyes(new VisualGridRunner(10));
+
       var key = apiKey || process.env.APPLITOOLS_API_KEY;
       eyes.setApiKey(key);
       eyes.setLogHandler(new ConsoleLogHandler(log));
-      eyes.setBatch({id: batchId, name: sitemapFile});
       
       var server = serverUrl || "https://eyes.applitools.com" 
       eyes.setServerUrl(server);
-      //eyes.setBatch(new BatchInfo(sitemapFile));
 
       if (headless) {
          var driver = new Builder().forBrowser('chrome').setChromeOptions(new ChromeOptions().headless()).build();
@@ -125,17 +125,18 @@ async function browser(url) {
       
       if (enableVisualGrid) {
          
-         const configuration = new SeleniumConfiguration();
-         configuration.setAppName(appName);
-         configuration.setTestName(url);
-         configuration.concurrentSessions = 50;
-         configuration.addBrowser( 500,  800, BrowserType.CHROME  );
-         configuration.addBrowser( 500,  800, BrowserType.FIREFOX );
-         configuration.addBrowser( 1000, 800, BrowserType.CHROME  );
-         configuration.addBrowser( 1000, 800, BrowserType.FIREFOX );
-         configuration.addBrowser( 1500, 800, BrowserType.CHROME  );
-         configuration.addBrowser( 1500, 800, BrowserType.FIREFOX );
-         await eyes.open(driver, configuration);
+         const conf = {
+            appName: appName,
+            testName: url,
+            batch: {
+				   id: batchId, 
+				   name: sitemapFile,
+			   },
+            viewportSize: {width: 1200, height: 800},
+         };
+         
+         eyes.setConfiguration(conf);
+         await eyes.open(driver);
      	
       } else {
 
@@ -150,7 +151,7 @@ async function browser(url) {
       
       console.error('\n' + sessionId + ' Unhandled exception: ' + err.message);
       console.log('Failed Test: ', url + '\n'); 
-    
+
       if (driver && sessionId) {
          await driver.quit();
          await eyes.abortIfNotClosed();
@@ -160,7 +161,7 @@ async function browser(url) {
 
       console.error('\nFinished Session: ' + sessionId + ', url: ' + url + '\n');
       await driver.quit();
-      await eyes.abortIfNotClosed();     
+      await eyes.abortIfNotClosed();  
   
    }
 
