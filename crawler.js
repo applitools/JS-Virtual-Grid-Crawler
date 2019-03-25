@@ -77,11 +77,11 @@ async function browser(url) {
 	
    try {
       
-      //var eyes = new Eyes(enableVisualGrid);
-      const eyes = new Eyes(new VisualGridRunner(10));
+      var eyes = new Eyes(new VisualGridRunner(10));
 
       var key = apiKey || process.env.APPLITOOLS_API_KEY;
       eyes.setApiKey(key);
+      
       eyes.setLogHandler(new ConsoleLogHandler(log));
       
       var server = serverUrl || "https://eyes.applitools.com" 
