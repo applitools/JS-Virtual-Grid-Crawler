@@ -124,8 +124,8 @@ async function browser(url) {
             testName: appName,
             appName: url,
             batch: {
-				   id: batchId, ///<--- Doesn't seem to work...
-				   name: sitemapFile,
+               id: batchId, ///<--- Doesn't seem to work...
+               name: sitemapFile,
 			   },
             viewportSize: { width: 1200, height: 800 },
             browsersInfo: [
