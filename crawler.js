@@ -84,7 +84,7 @@ async function browser(url) {
       
       eyes.setLogHandler(new ConsoleLogHandler(log));
       
-      var server = serverUrl || "https://eyes.applitools.com" 
+      var server = serverUrl || "https://eyes.applitools.com"; 
       eyes.setServerUrl(server);
 
       if (headless) {
@@ -105,36 +105,68 @@ async function browser(url) {
       sleep.msleep(millSleep);
       
       await driver.get(url);
-      
-      // Batching broke with 4.9.0 :(
-      // const configuration = new SeleniumConfiguration();
-      // configuration.appName = path.basename(sitemapFile, '.xml');
-      // configuration.testName = url;
-      // configuration.addBrowser(800, 800, BrowserType.CHROME);
-      // configuration.addBrowser(800, 800, BrowserType.FIREFOX);
-      // configuration.addBrowser(1300, 800, BrowserType.CHROME);
-      // configuration.addBrowser(1300, 800, BrowserType.FIREFOX);
-      // configuration.addDevice(DeviceName.iPhone_X, ScreenOrientation.LANDSCAPE);
-      // configuration.addDevice(DeviceName.iPhone_X, ScreenOrientation.PORTRAIT);
-      // configuration.addDevice(DeviceName.Nexus_6, ScreenOrientation.LANDSCAPE);
-      // configuration.addDevice(DeviceName.Nexus_6, ScreenOrientation.PORTRAIT);
-      // eyes.setConfiguration(configuration);
-      // await eyes.open(driver);
-      
+          
       var appName = path.basename(sitemapFile, '.xml');
       
       if (enableVisualGrid) {
          
+         // var conf = {
+         //    appName: appName,
+         //    testName: url,
+         //    batch: {
+			// 	   id: batchId, 
+			// 	   name: sitemapFile,
+			//    },
+         //    viewportSize: {width: 1200, height: 800},
+         // };
+
          const conf = {
-            appName: appName,
-            testName: url,
+            testName: appName,
+            appName: url,
             batch: {
-				   id: batchId, 
+				   id: batchId, ///<--- Doesn't seem to work...
 				   name: sitemapFile,
 			   },
-            viewportSize: {width: 1200, height: 800},
+            viewportSize: { width: 1200, height: 800 },
+            browsersInfo: [
+               {
+                  width: 1200,
+                  height: 800,
+                  name: 'firefox',
+               },
+               {
+                  width: 1200,
+                  height: 800,
+                  name: 'ie',
+               },
+               {
+                  width: 1200,
+                  height: 800,
+                  name: 'chrome',
+               },
+               {
+                  deviceName: 'iPhone X',
+                  screenOrientation: 'portrait',
+               },
+               {
+                  deviceName: 'iPhone 8',
+                  screenOrientation: 'portrait',
+               },
+               {
+                  deviceName: 'iPad',
+                  screenOrientation: 'portrait',
+               },
+               {
+                  deviceName: 'Nexus 7',
+                  screenOrientation: 'portrait',
+               },
+               {
+                  deviceName: 'Pixel 2',
+                  screenOrientation: 'portrait',
+               }
+            ],
          };
-         
+               
          eyes.setConfiguration(conf);
          await eyes.open(driver);
      	
@@ -145,7 +177,8 @@ async function browser(url) {
       }
 
       await eyes.check(url, Target.window().fully());
-      await eyes.close(false);
+      //await eyes.close(false);
+      const results = await eyes.getRunner().getAllResults();
 
    } catch(err) {
       
