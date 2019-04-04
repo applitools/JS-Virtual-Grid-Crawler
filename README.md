@@ -49,47 +49,19 @@ Options:
 * Quit during mid-execution:
    * ctrl-c only once and wait! This should put you in the FINALLY block to kill the execution and close all browsers. Repeated ctrl-c might break out of the his block and leave zombie browsers running on your pc which you'll have to manually kill. 
 
-### VG Hardcoded Options:
+### Current VG Hardcoded Options:
 
 ```
 browsersInfo: [
-               {
-                  width: 1200,
-                  height: 800,
-                  name: 'firefox',
-               },
-               {
-                  width: 1200,
-                  height: 800,
-                  name: 'ie',
-               },
-               {
-                  width: 1200,
-                  height: 800,
-                  name: 'edge',
-               },
-               {
-                  width: 1200,
-                  height: 800,
-                  name: 'chrome',
-               },
-               {
-                  deviceName: 'iPhone X',
-                  screenOrientation: 'portrait',
-               },
-               {
-                  deviceName: 'iPad',
-                  screenOrientation: 'portrait',
-               },
-               {
-                  deviceName: 'Nexus 7',
-                  screenOrientation: 'portrait',
-               },
-               {
-                  deviceName: 'Pixel 2',
-                  screenOrientation: 'portrait',
-               }
-            ],
+   { width: 1200, height: 800, name: 'firefox' },
+   { width: 1200, height: 800, name: 'ie' },
+   { width: 1200, height: 800, name: 'edge' },
+   { width: 1200, height: 800, name: 'chrome' },
+   { deviceName: 'iPhone X', screenOrientation: 'portrait' },
+   { deviceName: 'iPad',     screenOrientation: 'portrait' },
+   { deviceName: 'Nexus 7',  screenOrientation: 'portrait' },
+   { deviceName: 'Pixel 2',  screenOrientation: 'portrait' }
+]
 ```
 
 ### ToDos:
