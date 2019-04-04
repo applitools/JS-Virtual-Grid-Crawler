@@ -70,22 +70,27 @@ async function browser(url) {
    const { Options: ChromeOptions } = require('selenium-webdriver/chrome');
    const {Builder, By, until} = require('selenium-webdriver');
    
-   const { ConsoleLogHandler, Region, TestResults, GeneralUtils, MatchLevel } = require('@applitools/eyes-sdk-core');
-   const { Eyes, Target, SeleniumConfiguration, BrowserType, StitchMode, DeviceName, ScreenOrientation, BatchInfo } = require('@applitools/eyes-selenium');
+   const { ConsoleLogHandler } = require('@applitools/eyes-sdk-core');
+   const { Eyes, Target, VisualGridRunner, BatchInfo } = require('@applitools/eyes-selenium');
    
    var expect = require('chai').expect;
 	
    try {
       
-      var eyes = new Eyes(enableVisualGrid);
+      if (enableVisualGrid) {
+         var eyes = new Eyes(new VisualGridRunner(25));
+      } else {
+         var eyes = new Eyes();
+         eyes.setBatch({name: sitemapFile, id: myBatchId});
+      }
+
+      eyes.setLogHandler(new ConsoleLogHandler(log));
+      
+      var server = serverUrl || "https://eyes.applitools.com"; 
+      eyes.setServerUrl(server);
+
       var key = apiKey || process.env.APPLITOOLS_API_KEY;
       eyes.setApiKey(key);
-      eyes.setLogHandler(new ConsoleLogHandler(log));
-      eyes.setBatch({id: batchId, name: sitemapFile});
-      
-      var server = serverUrl || "https://eyes.applitools.com" 
-      eyes.setServerUrl(server);
-      //eyes.setBatch(new BatchInfo(sitemapFile));
 
       if (headless) {
          var driver = new Builder().forBrowser('chrome').setChromeOptions(new ChromeOptions().headless()).build();
@@ -105,65 +110,92 @@ async function browser(url) {
       sleep.msleep(millSleep);
       
       await driver.get(url);
-      
-      // Batching broke with 4.9.0 :(
-      // const configuration = new SeleniumConfiguration();
-      // configuration.appName = path.basename(sitemapFile, '.xml');
-      // configuration.testName = url;
-      // configuration.addBrowser(800, 800, BrowserType.CHROME);
-      // configuration.addBrowser(800, 800, BrowserType.FIREFOX);
-      // configuration.addBrowser(1300, 800, BrowserType.CHROME);
-      // configuration.addBrowser(1300, 800, BrowserType.FIREFOX);
-      // configuration.addDevice(DeviceName.iPhone_X, ScreenOrientation.LANDSCAPE);
-      // configuration.addDevice(DeviceName.iPhone_X, ScreenOrientation.PORTRAIT);
-      // configuration.addDevice(DeviceName.Nexus_6, ScreenOrientation.LANDSCAPE);
-      // configuration.addDevice(DeviceName.Nexus_6, ScreenOrientation.PORTRAIT);
-      // eyes.setConfiguration(configuration);
-      // await eyes.open(driver);
-      
+          
       var appName = path.basename(sitemapFile, '.xml');
       
       if (enableVisualGrid) {
-         
-         const configuration = new SeleniumConfiguration();
-         configuration.setAppName(appName);
-         configuration.setTestName(url);
-         configuration.concurrentSessions = 50;
-         configuration.addBrowser( 500,  800, BrowserType.CHROME  );
-         configuration.addBrowser( 500,  800, BrowserType.FIREFOX );
-         configuration.addBrowser( 1000, 800, BrowserType.CHROME  );
-         configuration.addBrowser( 1000, 800, BrowserType.FIREFOX );
-         configuration.addBrowser( 1500, 800, BrowserType.CHROME  );
-         configuration.addBrowser( 1500, 800, BrowserType.FIREFOX );
-         await eyes.open(driver, configuration);
+   
+         const conf = {
+            testName: appName,
+            appName: url,
+            serverUrl: server,
+            apiKey: key,  
+            batch: {
+               id: myBatchId,
+               name: sitemapFile,
+			   },
+            viewportSize: { width: 1200, height: 800 },
+            browsersInfo: [
+               {
+                  width: 1200,
+                  height: 800,
+                  name: 'firefox',
+               },
+               {
+                  width: 1200,
+                  height: 800,
+                  name: 'ie',
+               },
+               {
+                  width: 1200,
+                  height: 800,
+                  name: 'edge',
+               },
+               {
+                  width: 1200,
+                  height: 800,
+                  name: 'chrome',
+               },
+               {
+                  deviceName: 'iPhone X',
+                  screenOrientation: 'portrait',
+               },
+               {
+                  deviceName: 'iPad',
+                  screenOrientation: 'portrait',
+               },
+               {
+                  deviceName: 'Nexus 7',
+                  screenOrientation: 'portrait',
+               },
+               {
+                  deviceName: 'Pixel 2',
+                  screenOrientation: 'portrait',
+               }
+            ],
+         };
+               
+         eyes.setConfiguration(conf);
+
+         await eyes.open(driver);
      	
       } else {
-
-         await eyes.open(driver, appName, url, { width: 1200, height: 800 });
-
+         await eyes.open(driver, appName, url);
       }
 
       await eyes.check(url, Target.window().fully());
-      await eyes.close(false);
+
+      if (enableVisualGrid) {
+         const results = await eyes.getRunner().getAllResults();
+      } else {
+         await eyes.close();
+      }
 
    } catch(err) {
       
       console.error('\n' + sessionId + ' Unhandled exception: ' + err.message);
       console.log('Failed Test: ', url + '\n'); 
-    
-      if (driver && sessionId) {
-         await driver.quit();
-         await eyes.abortIfNotClosed();
-      }
-          
+
    } finally {
 
-      console.error('\nFinished Session: ' + sessionId + ', url: ' + url + '\n');
-      await driver.quit();
-      await eyes.abortIfNotClosed();     
-  
+      console.log('\nFinished Session: ' + sessionId + ', url: ' + url + '\n'); 
+      try{ 
+         await driver.quit();
+         await eyes.abortIfNotClosed();
+      } catch(error) {
+         console.error('\nFinally Error: ', error + '\n'); 
+      }
    }
-
 }
 
 function millisToMinutesAndSeconds(millis) {
@@ -204,8 +236,8 @@ function isInt(value) {
 }
 
 //Global variables
-var batchId = Math.round((new Date()).getTime() / 1000).toString();
-console.log("My Applitools Batch ID: " + batchId)
+var myBatchId = Math.round((new Date()).getTime() / 1000).toString();
+console.log("My Applitools Batch ID: " + myBatchId)
 
 let apiKey = String;
 let serverUrl = String;
