@@ -70,22 +70,27 @@ async function browser(url) {
    const { Options: ChromeOptions } = require('selenium-webdriver/chrome');
    const {Builder, By, until} = require('selenium-webdriver');
    
-   const { ConsoleLogHandler, Region, TestResults, GeneralUtils, MatchLevel } = require('@applitools/eyes-sdk-core');
-   const { Eyes, Target, VisualGridRunner, BrowserType, StitchMode, DeviceName, ScreenOrientation, batchId, BatchInfo } = require('@applitools/eyes-selenium');
+   const { ConsoleLogHandler } = require('@applitools/eyes-sdk-core');
+   const { Eyes, Target, VisualGridRunner, BatchInfo } = require('@applitools/eyes-selenium');
    
    var expect = require('chai').expect;
 	
    try {
       
-      var eyes = new Eyes(new VisualGridRunner(10));
+      if (enableVisualGrid) {
+         var eyes = new Eyes(new VisualGridRunner(25));
+      } else {
+         var eyes = new Eyes();
+         eyes.setBatch({name: sitemapFile, id: myBatchId});
+      }
 
-      var key = apiKey || process.env.APPLITOOLS_API_KEY;
-      eyes.setApiKey(key);
-      
       eyes.setLogHandler(new ConsoleLogHandler(log));
       
       var server = serverUrl || "https://eyes.applitools.com"; 
       eyes.setServerUrl(server);
+
+      var key = apiKey || process.env.APPLITOOLS_API_KEY;
+      eyes.setApiKey(key);
 
       if (headless) {
          var driver = new Builder().forBrowser('chrome').setChromeOptions(new ChromeOptions().headless()).build();
@@ -109,22 +114,14 @@ async function browser(url) {
       var appName = path.basename(sitemapFile, '.xml');
       
       if (enableVisualGrid) {
-         
-         // var conf = {
-         //    appName: appName,
-         //    testName: url,
-         //    batch: {
-			// 	   id: batchId, 
-			// 	   name: sitemapFile,
-			//    },
-         //    viewportSize: {width: 1200, height: 800},
-         // };
-
+   
          const conf = {
             testName: appName,
             appName: url,
+            serverUrl: server,
+            apiKey: key,  
             batch: {
-               id: batchId, ///<--- Doesn't seem to work...
+               id: myBatchId,
                name: sitemapFile,
 			   },
             viewportSize: { width: 1200, height: 800 },
@@ -142,14 +139,15 @@ async function browser(url) {
                {
                   width: 1200,
                   height: 800,
+                  name: 'edge',
+               },
+               {
+                  width: 1200,
+                  height: 800,
                   name: 'chrome',
                },
                {
                   deviceName: 'iPhone X',
-                  screenOrientation: 'portrait',
-               },
-               {
-                  deviceName: 'iPhone 8',
                   screenOrientation: 'portrait',
                },
                {
@@ -168,36 +166,36 @@ async function browser(url) {
          };
                
          eyes.setConfiguration(conf);
+
          await eyes.open(driver);
      	
       } else {
-
-         await eyes.open(driver, appName, url, { width: 1200, height: 800 });
-
+         await eyes.open(driver, appName, url);
       }
 
       await eyes.check(url, Target.window().fully());
-      //await eyes.close(false);
-      const results = await eyes.getRunner().getAllResults();
+
+      if (enableVisualGrid) {
+         const results = await eyes.getRunner().getAllResults();
+      } else {
+         await eyes.close();
+      }
 
    } catch(err) {
       
       console.error('\n' + sessionId + ' Unhandled exception: ' + err.message);
       console.log('Failed Test: ', url + '\n'); 
 
-      if (driver && sessionId) {
-         await driver.quit();
-         await eyes.abortIfNotClosed();
-      }
-          
    } finally {
 
-      console.error('\nFinished Session: ' + sessionId + ', url: ' + url + '\n');
-      await driver.quit();
-      await eyes.abortIfNotClosed();  
-  
+      console.log('\nFinished Session: ' + sessionId + ', url: ' + url + '\n'); 
+      try{ 
+         await driver.quit();
+         await eyes.abortIfNotClosed();
+      } catch(error) {
+         console.error('\nFinally Error: ', error + '\n'); 
+      }
    }
-
 }
 
 function millisToMinutesAndSeconds(millis) {
@@ -238,8 +236,8 @@ function isInt(value) {
 }
 
 //Global variables
-var batchId = Math.round((new Date()).getTime() / 1000).toString();
-console.log("My Applitools Batch ID: " + batchId)
+var myBatchId = Math.round((new Date()).getTime() / 1000).toString();
+console.log("My Applitools Batch ID: " + myBatchId)
 
 let apiKey = String;
 let serverUrl = String;
