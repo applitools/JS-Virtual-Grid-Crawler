@@ -52,12 +52,44 @@ Options:
 ### VG Hardcoded Options:
 
 ```
-configuration.addBrowser( 500,  800, BrowserType.CHROME  );
-configuration.addBrowser( 500,  800, BrowserType.FIREFOX );
-configuration.addBrowser( 1000, 800, BrowserType.CHROME  );
-configuration.addBrowser( 1000, 800, BrowserType.FIREFOX );
-configuration.addBrowser( 1500, 800, BrowserType.CHROME  );
-configuration.addBrowser( 1500, 800, BrowserType.FIREFOX );
+browsersInfo: [
+               {
+                  width: 1200,
+                  height: 800,
+                  name: 'firefox',
+               },
+               {
+                  width: 1200,
+                  height: 800,
+                  name: 'ie',
+               },
+               {
+                  width: 1200,
+                  height: 800,
+                  name: 'edge',
+               },
+               {
+                  width: 1200,
+                  height: 800,
+                  name: 'chrome',
+               },
+               {
+                  deviceName: 'iPhone X',
+                  screenOrientation: 'portrait',
+               },
+               {
+                  deviceName: 'iPad',
+                  screenOrientation: 'portrait',
+               },
+               {
+                  deviceName: 'Nexus 7',
+                  screenOrientation: 'portrait',
+               },
+               {
+                  deviceName: 'Pixel 2',
+                  screenOrientation: 'portrait',
+               }
+            ],
 ```
 
 ### ToDos:
