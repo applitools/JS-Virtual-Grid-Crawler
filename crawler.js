@@ -35,6 +35,31 @@ async function SitemapGenerator(url, maxUrls) {
    });
 }
 
+// function sitemapArrayTest(sitemap, url = null) {
+   
+//    const fs = require('fs');
+//    const smta = require('sitemap-to-array');
+   
+//    var data;
+//    if (url === null) {
+//       console.log("Sitemap File: " + sitemap);
+//       var data = fs.readFileSync(sitemap, 'utf-8');
+//    } else {
+//       console.log("Sitemap Url: " + url);
+//       var data = url;
+//    };
+   
+//    var sitemapUrls = [];
+//    const options = { returnOnComplete: true };
+   
+//    smta(data, options, (error, list) => {
+//       for (var url in list) {
+//          sitemapUrls.push(list[url]);
+//       }
+//    });
+//    return sitemapUrls;
+// }
+
 async function sitemapArray(sitemap, url = null) {
    
    const fs = require('fs');
@@ -55,7 +80,7 @@ async function sitemapArray(sitemap, url = null) {
    return new Promise(async (resolve) => {
       await smta(data, options, (error, list) => {
          for (var url in list) {
-            sitemapUrls.push(list[url].loc);
+            sitemapUrls.push(list[url]);
          }
          resolve(sitemapUrls);
       });
@@ -101,23 +126,23 @@ async function browser(url) {
       var sessionId = await driver.getSession().then(function(session){
          var sessionId = session.id_;
          console.log('\nStarting Session: ', sessionId);
-         console.log('Navigating to Url: ', url + '\n'); 
+         console.log('Navigating to Url: ', url.loc + '\n'); 
          return sessionId;
       });
       
       var sleep = require('sleep');
       var millSleep = Math.floor(Math.random() * Math.floor(1000));
-      sleep.msleep(millSleep);
+      await sleep.msleep(millSleep);
       
-      await driver.get(url);
+      await driver.get(url.loc);
           
       var appName = path.basename(sitemapFile, '.xml');
       
       if (enableVisualGrid) {
    
          const conf = {
-            testName: appName,
-            appName: url,
+            testName: url.loc,
+            appName: appName,
             serverUrl: server,
             apiKey: key,  
             batch: {
@@ -142,10 +167,23 @@ async function browser(url) {
          await eyes.open(driver);
      	
       } else {
-         await eyes.open(driver, appName, url);
+         await eyes.open(driver, appName, url.loc);
       }
 
-      await eyes.check(url, Target.window().fully());
+      await eyes.check(url.loc, Target.window().fully());
+
+      if (Object.keys(url).length > 1) {
+         Object.keys(url).slice(1).forEach(async function(key) {
+            var step = url[key];
+            console.log('Executing Step: ' + step);
+            try {
+               await eval(step); //may need to return a promise here...
+            } catch(err) {
+               console.error('\nStep: ' + step + 'Error: ', err + '\n');
+            }
+            await sleep.msleep(10000);
+         });
+      }
 
       if (enableVisualGrid) {
          const results = await eyes.getRunner().getAllResults();
@@ -156,11 +194,11 @@ async function browser(url) {
    } catch(err) {
       
       console.error('\n' + sessionId + ' Unhandled exception: ' + err.message);
-      console.log('Failed Test: ', url + '\n'); 
+      console.log('Failed Test: ', url.loc + '\n'); 
 
    } finally {
 
-      console.log('\nFinished Session: ' + sessionId + ', url: ' + url + '\n'); 
+      console.log('\nFinished Session: ' + sessionId + ', url: ' + url.loc + '\n'); 
       try{ 
          await driver.quit();
          await eyes.abortIfNotClosed();

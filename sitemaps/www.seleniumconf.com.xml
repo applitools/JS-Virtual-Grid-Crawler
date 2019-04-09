@@ -2,8 +2,10 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.seleniumconf.com/</loc>
+    <action>driver.findElement(By.css('body > div.page-content > div > section.section > div > div:nth-child(1) > div > h3 > a')).click()</action>
+    <check>eyes.check('London Speakers', Target.region(driver.findElement(By.css('body'))))</check>
   </url>
-  <url>
+  <!-- <url>
     <loc>https://www.seleniumconf.com/2/</loc>
   </url>
   <url>
@@ -26,5 +28,5 @@
   </url>
   <url>
     <loc>https://www.seleniumconf.com/austin/playlist/2017/04/07/seconf-austin-playlist/</loc>
-  </url>
+  </url> -->
 </urlset>
