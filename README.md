@@ -2,6 +2,9 @@
 
 ### Quickly collect screenshots of all your website pages and responsive viewports.
 
+### Disclaimer
+* This is a POC of using the Applitools Visual Grid and sitemap crawling a website. This is free for use, change/modify, and do whatever you please with it. It is NOT SUPPORTED by Applitools and its use at your own risk. 
+
 ### To Install:
 
 * ```$ git clone git@github.com:applitools/JS-Virtual-Grid-Crawler.git```
