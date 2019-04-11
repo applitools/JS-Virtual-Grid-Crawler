@@ -71,7 +71,7 @@ async function browser(url) {
    const {Builder, By, until} = require('selenium-webdriver');
    
    const { ConsoleLogHandler } = require('@applitools/eyes-sdk-core');
-   const { Eyes, Target, VisualGridRunner, BatchInfo } = require('@applitools/eyes-selenium');
+   const { Eyes, Target, VisualGridRunner, MatchLevel } = require('@applitools/eyes-selenium');
    
    var expect = require('chai').expect;
 	
@@ -83,6 +83,8 @@ async function browser(url) {
          var eyes = new Eyes();
          eyes.setBatch({name: sitemapFile, id: myBatchId});
       }
+
+      eyes.setMatchLevel(eval('MatchLevel.' + level))
 
       eyes.setLogHandler(new ConsoleLogHandler(log));
       
@@ -110,16 +112,26 @@ async function browser(url) {
       sleep.msleep(millSleep);
       
       await driver.get(url);
-          
-      var appName = path.basename(sitemapFile, '.xml');
+      
+      if (appName === null) {
+         var app = path.basename(sitemapFile, '.xml');
+      } else {
+         var app = appName;
+      }
+
+      if (testName === null) {
+         var test = url;
+      } else {
+         var test = testName;
+      }
       
       if (enableVisualGrid) {
    
          const conf = {
-            testName: appName,
-            appName: url,
+            appName: app,
+            testName: test,
             serverUrl: server,
-            apiKey: key,  
+            apiKey: key,
             batch: {
                id: myBatchId,
                name: sitemapFile,
@@ -142,11 +154,17 @@ async function browser(url) {
          await eyes.open(driver);
      	
       } else {
-         await eyes.open(driver, appName, url);
+         
+         await eyes.open(driver, app, test);
+      
       }
 
-      await eyes.check(url, Target.window().fully());
-
+      if (enableFullPage) {
+         await eyes.check(url, Target.window().fully());
+      } else {
+         await eyes.check(url, Target.window());
+      }
+      
       if (enableVisualGrid) {
          const results = await eyes.getRunner().getAllResults();
       } else {
@@ -219,6 +237,10 @@ let headless = Boolean;
 let sitemapFile = String;
 let array = Array;
 let start = Date;
+let appName = String;
+let testName = String;
+let level = String;
+let enableFullPage = Boolean;
 
 async function crawler() {
    
@@ -235,6 +257,11 @@ async function crawler() {
    .option('--no-grid', 'Disable the Visual Grid and run locally only (Default: false). e.g. --no-grid')
    .option('--log', 'Enable Applitools Debug Logs (Default: false). e.g. --log')
    .option('--headless', 'Run Chrome headless (Default: false). e.g. --headless')
+   .option('--no-fullPage', 'Disable Full Page Screenshot (Default: full page). e.g. --no-fullPage')
+   .option('-U --URL [URL]', 'Add a single web URL you want to capture images for. e.g. -U https://www.google.com')
+   .option('-a --appName [appName]', 'Override your appName. e.g. -a MyApp')
+   .option('-t --testName [testName]', 'Override your testName. e.g. -t MyTest')
+   .option('-l --level [level]', 'Set your Match Level "Layout2, Content, Strict, Exact" (Default: Strict). e.g. -l Layout2')
    .parse(process.argv);
    
    apiKey = program.key
@@ -242,27 +269,58 @@ async function crawler() {
    enableVisualGrid = program.grid;
    log = program.log;
    headless = program.headless;
+   appName = program.appName || null;
+   testName = program.testName || null;
+   level = program.level || 'Strict';
+   enableFullPage = program.fullPage;
    
    if (!isInt(program.browsers)) {
       program.browsers = 10;
    }
    
-   if (program.sitemapUrl) {
-      
+   var validMatchLevels = [  
+      'Layout2',
+      'Content',
+      'Strict',
+      'Exact'
+   ]
+
+   if (!validMatchLevels.includes(level)) {
+      console.log("\nUnknown Match Level: " + level);
+      console.log("Please specify a valid Match Level: " + validMatchLevels + "\n");
+      process.exit();
+   }
+
+   if (program.URL) {
+
       var urlParser = require('url');
-      var host = urlParser.parse(program.sitemapUrl).host;
+      var host = urlParser.parse(program.URL).host;
       sitemapFile = host;
-      array = await sitemapArray('', program.sitemapUrl);
-   
+      array = [program.URL];
+
    } else {
+      //disable app and test names when crawling sitemap.
+      appName = null;
+      testName = null;
+
+      if (program.sitemapUrl) {
+         
+         var urlParser = require('url');
+         var host = urlParser.parse(program.sitemapUrl).host;
+         sitemapFile = host;
+         array = await sitemapArray('', program.sitemapUrl);
       
-      if (program.sitemap) {
-         sitemapFile = program.sitemap
       } else {
-         sitemapFile = await SitemapGenerator(program.url, 500);
+         
+         if (program.sitemap) {
+            sitemapFile = program.sitemap
+         } else {
+            sitemapFile = await SitemapGenerator(program.url, 500);
+         }
+         
+         array = await sitemapArray(sitemapFile);
       }
-      
-      array = await sitemapArray(sitemapFile);
+   
    }
    
    var start = new Date();
