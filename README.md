@@ -49,7 +49,7 @@ Options:
 * Run Chrome Headless: `$ node crawler.js -s ./sitemaps/www.seleniumconf.com.xml --headless`
 * Overides: Set API Key and On-Prem/Private Cloud Server URL and Run: `$ node crawler.js -u https://seleniumconf.com -k YourApiKey -v https://youreyes.applitools.com`
 * Crawl a single URL: `$ node crawler.js -U https://www.google.com`
-* Crawl a single URL and set a App and Test Name: `$ node crawler.js -U www.google.com -a Google -t HomePage`
+* Crawl a single URL and set a App and Test Name: `$ node crawler.js -U https://www.google.com -a Google -t HomePage`
 * Disable Full Page Screenshot: `$ node crawler.js -s ./sitemaps/www.seleniumconf.com.xml --no-fullPage`
 
 ### Notes:
