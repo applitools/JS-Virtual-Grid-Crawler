@@ -64,7 +64,6 @@ async function sitemapArray(sitemap, url = null) {
 
 async function browser(url) {
    
-   var path = require('path');
    require('chromedriver');
    
    const { Options: ChromeOptions } = require('selenium-webdriver/chrome');
@@ -73,8 +72,8 @@ async function browser(url) {
    const { ConsoleLogHandler } = require('@applitools/eyes-sdk-core');
    const { Eyes, Target, VisualGridRunner, MatchLevel } = require('@applitools/eyes-selenium');
    
-   var expect = require('chai').expect;
-	
+   const config = require('./config.js');
+   
    try {
       
       if (enableVisualGrid) {
@@ -115,23 +114,39 @@ async function browser(url) {
       sleep.msleep(millSleep);
       
       await driver.get(url);
- 
-      driver.executeScript("window.scrollTo(0, document.body.scrollHeight);");
+      sleep.msleep(1000);
+      
+      if (config.afterPageLoad) {
+         try {
+            for (var step in config.afterPageLoad) {
+               await eval(config.afterPageLoad[step]);
+               sleep.msleep(1000);
+            }
+         } catch(err) {
+            console.log("afterPageLoad Exception: " + err);
+         }
+      }
+
+      await driver.executeScript("window.scrollTo(0, document.body.scrollHeight);");
+      sleep.msleep(millSleep);
+      await driver.executeScript("window.scrollTo(0, 0);");
 
       if (appName === null) {
+         var path = require('path');
          var app = path.basename(sitemapFile, '.xml');
       } else {
          var app = appName;
       }
 
       if (testName === null) {
-         var test = url;
+         var urlParser = require('url');
+         var test = urlParser.parse(url).path;
       } else {
          var test = testName;
       }
       
       if (enableVisualGrid) {
-   
+
          const conf = {
             appName: app,
             testName: test,
@@ -141,22 +156,10 @@ async function browser(url) {
                id: myBatchId,
                name: sitemapFile,
 			   },
-            viewportSize: { width: 1200, height: 800 },
-            browsersInfo: [
-               { width: 1200, height: 800, name: 'firefox' },
-               { width: 1200, height: 800, name: 'ie' },
-               { width: 1200, height: 800, name: 'edge' },
-               { width: 1200, height: 800, name: 'chrome' },
-               { width: 1200, height: 800, name: 'safari' },
-               { deviceName: 'iPhone X', screenOrientation: 'portrait' },
-               { deviceName: 'iPad', screenOrientation: 'portrait' },
-               { deviceName: 'Nexus 7', screenOrientation: 'portrait' },
-               { deviceName: 'Pixel 2', screenOrientation: 'portrait' }
-            ],
+            browsersInfo: config.browsersInfo,
          };
                
          eyes.setConfiguration(conf);
-
          await eyes.open(driver);
      	
       } else {
@@ -300,8 +303,7 @@ async function crawler() {
       array = [program.URL];
 
    } else {
-      //disable app and test names when crawling sitemap.
-      appName = null;
+      //disable test names when crawling sitemap.
       testName = null;
 
       if (program.sitemapUrl) {

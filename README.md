@@ -60,7 +60,8 @@ Options:
 * Quit during mid-execution:
    * ctrl-c only once and wait! This should put you in the FINALLY block to kill the execution and close all browsers. Repeated ctrl-c might break out of the his block and leave zombie browsers running on your pc which you'll have to manually kill. 
 
-### Current VG Hardcoded Options:
+### Current VG Options:
+   * This can be modified in the config.js file.
 
 ```
 browsersInfo: [
@@ -77,7 +78,6 @@ browsersInfo: [
 
 ### ToDos:
 
-* Create configuration file to pass in the virtual grid configurations.
 * Multithread/process the sitemap creation to speed it up.
 * Clean/Dry the code. Split methods into classes.
 * Add additional checks/actions to a sitemap. e.g: 
