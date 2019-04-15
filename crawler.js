@@ -68,7 +68,7 @@ async function browser(url) {
    require('chromedriver');
    
    const { Options: ChromeOptions } = require('selenium-webdriver/chrome');
-   const {Builder, By, until} = require('selenium-webdriver');
+   const {Builder, By, until, Capabilities} = require('selenium-webdriver');
    
    const { ConsoleLogHandler } = require('@applitools/eyes-sdk-core');
    const { Eyes, Target, VisualGridRunner, MatchLevel } = require('@applitools/eyes-selenium');
@@ -94,10 +94,13 @@ async function browser(url) {
       var key = apiKey || process.env.APPLITOOLS_API_KEY;
       eyes.setApiKey(key);
 
+      var options = new ChromeOptions();
+      options.addArguments("--lang=en_US");
+
       if (headless) {
-         var driver = new Builder().forBrowser('chrome').setChromeOptions(new ChromeOptions().headless()).build();
+         var driver = new Builder().forBrowser('chrome').setChromeOptions(new ChromeOptions(options).headless()).build();
       } else {
-         var driver = new Builder().forBrowser('chrome').build();
+         var driver = new Builder().forBrowser('chrome').setChromeOptions(options).build();
       }
     
       var sessionId = await driver.getSession().then(function(session){
@@ -112,7 +115,9 @@ async function browser(url) {
       sleep.msleep(millSleep);
       
       await driver.get(url);
-      
+ 
+      driver.executeScript("window.scrollTo(0, document.body.scrollHeight);");
+
       if (appName === null) {
          var app = path.basename(sitemapFile, '.xml');
       } else {
@@ -142,6 +147,7 @@ async function browser(url) {
                { width: 1200, height: 800, name: 'ie' },
                { width: 1200, height: 800, name: 'edge' },
                { width: 1200, height: 800, name: 'chrome' },
+               { width: 1200, height: 800, name: 'safari' },
                { deviceName: 'iPhone X', screenOrientation: 'portrait' },
                { deviceName: 'iPad', screenOrientation: 'portrait' },
                { deviceName: 'Nexus 7', screenOrientation: 'portrait' },
@@ -197,10 +203,6 @@ function millisToMinutesAndSeconds(millis) {
 const promiseProducer = () => {
    
    if (array.length === 0) {
-      // var finished = new Date();
-      // var diff = Math.abs(start - finished);
-      // var duration = millisToMinutesAndSeconds(diff);
-      // console.log("\nTotal Duration: " + duration);
       return null;
    } else {
       console.log("\nURLs Remaining: " + array.length + "\n")
@@ -236,7 +238,6 @@ let log = Boolean;
 let headless = Boolean;
 let sitemapFile = String;
 let array = Array;
-let start = Date;
 let appName = String;
 let testName = String;
 let level = String;
@@ -324,11 +325,16 @@ async function crawler() {
    }
    
    var start = new Date();
-   console.log("\nStart Time: " + start);
+   console.log("\nStart Time: " + start + '\n');
    
    const PromisePool = require('es6-promise-pool');
    const pool = new PromisePool(promiseProducer, program.browsers);
    await pool.start();
+
+   var finished = new Date();
+   var diff = Math.abs(start - finished);
+   var duration = millisToMinutesAndSeconds(diff);
+   console.log("\nTotal Duration: " + duration + '\n');
 }
 
 crawler();
