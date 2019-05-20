@@ -11,8 +11,8 @@ module.exports = {
      ],
 
      //An Array of raw Selenium steps to take after the page loads... clicks, sendKeys, scroll etc...
-    //  afterPageLoad: [
-    //      "driver.findElement(By.css('span.cta-link.primary.link-text-yes')).click()",
-    //      "driver.findElement(By.css('div.cc-compliance')).click()"
-    //  ],
+     afterPageLoad: [
+         "driver.findElement(By.css('span.cta-link.primary.link-text-yes')).click()",
+         "driver.findElement(By.css('div.cc-compliance')).click()"
+     ],
 };
