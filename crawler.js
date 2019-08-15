@@ -69,7 +69,7 @@ async function browser(url) {
    const { Options: ChromeOptions } = require('selenium-webdriver/chrome');
    const {Builder, By, until, Capabilities} = require('selenium-webdriver');
    
-   const { ConsoleLogHandler } = require('@applitools/eyes-sdk-core');
+   const { ConsoleLogHandler, TestResults } = require('@applitools/eyes-sdk-core');
    const { Eyes, Target, VisualGridRunner, MatchLevel } = require('@applitools/eyes-selenium');
    
    const config = require('./config.js');
@@ -82,7 +82,7 @@ async function browser(url) {
          var eyes = new Eyes();
          eyes.setBatch({name: sitemapFile, id: myBatchId});
       }
-
+      
       eyes.setMatchLevel(eval('MatchLevel.' + level))
 
       eyes.setLogHandler(new ConsoleLogHandler(log));
@@ -165,7 +165,7 @@ async function browser(url) {
       } else {
          
          await eyes.open(driver, app, test);
-      
+         
       }
 
       if (enableFullPage) {
@@ -175,7 +175,7 @@ async function browser(url) {
       }
       
       if (enableVisualGrid) {
-         const results = await eyes.getRunner().getAllResults();
+         await eyes.getRunner().getAllTestResults();
       } else {
          await eyes.close();
       }
