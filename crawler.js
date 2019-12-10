@@ -1,23 +1,28 @@
-//https://peter.sh/experiments/chromium-command-line-switches/
-
 "use strict"; 
 
+const urlParser = require('url');
+const pry = require('pryjs')
+const sitemap = require('sitemap-generator');
+const fs = require('fs');
+const smta = require('sitemap-to-array');
+const path = require('path');
+const sleep = require('sleep');
+const program = require('commander');
+const config = require('./applitools.config.js');
+
 async function SitemapGenerator(url, maxUrls) {
-   
-   var urlParser = require('url');
-   const SitemapGenerator = require('sitemap-generator');
    
    var host = urlParser.parse(url).host;
    var filepath = './sitemaps/' + host + '.xml';
 
-   var generator = SitemapGenerator(url, {
+   var generator = sitemap(url, {
    	maxDepth: 0,
      	filepath: filepath,
      	stripQuerystring: true,
      	maxEntriesPerFile: maxUrls
    });
 
-   await generator.start();
+   generator.start();
 
    generator.on('add', (url) => {
       console.log(url);
@@ -36,10 +41,6 @@ async function SitemapGenerator(url, maxUrls) {
 }
 
 async function sitemapArray(sitemap, url = null) {
-   
-   const fs = require('fs');
-   const smta = require('sitemap-to-array');
-   
    var data;
    if (url === null) {
       console.log("Sitemap File: " + sitemap);
@@ -63,110 +64,118 @@ async function sitemapArray(sitemap, url = null) {
 }
 
 async function browser(url) {
-   
-   require('chromedriver');
-   
    const { Options: ChromeOptions } = require('selenium-webdriver/chrome');
    const {Builder, By, until, Capabilities} = require('selenium-webdriver');
+   const { 
+      Eyes, 
+      VisualGridRunner,
+      ClassicRunner,
+      Target, 
+      ConsoleLogHandler, 
+      Configuration, 
+      BrowserType, 
+      DeviceName, 
+      ScreenOrientation, 
+      BatchInfo,
+      StitchMode,
+      TestResults,
+      MatchLevel
+   } = require('@applitools/eyes-selenium');
+
+   if (enableVisualGrid) {
+      var concurrency = config.browsersInfo.length || 10;
+      var eyes = new Eyes(new VisualGridRunner(concurrency));
+   } else {
+      var eyes = new Eyes(new ClassicRunner());
+   }
+
+   var options = new ChromeOptions();
+   options.addArguments("--lang=en_US");
+
+   if (headless) {
+      var driver = await new Builder().forBrowser('chrome').setChromeOptions(new ChromeOptions(options).headless()).build();
+   } else {
+      var driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
+   }
+
+   var sessionId = await driver.getSession().then(function(session){
+      var sessionId = session.id_;
+      console.log('\nStarting Session: ', sessionId);
+      console.log('Navigating to Url: ', url + '\n'); 
+      return sessionId;
+   });
    
-   const { ConsoleLogHandler, TestResults } = require('@applitools/eyes-sdk-core');
-   const { Eyes, Target, VisualGridRunner, MatchLevel } = require('@applitools/eyes-selenium');
+   //randomize a delay to make each thread/browser slightly timed different. 
+   var millSleep = Math.floor(Math.random() * Math.floor(1000));
+   sleep.msleep(millSleep);
    
-   const config = require('./config.js');
+   await driver.get(url);
    
-   try {
-      
-      if (enableVisualGrid) {
-         var eyes = new Eyes(new VisualGridRunner(25));
-      } else {
-         var eyes = new Eyes();
-         eyes.setBatch({name: sitemapFile, id: myBatchId});
-      }
-      
-      eyes.setMatchLevel(eval('MatchLevel.' + level))
-
-      eyes.setLogHandler(new ConsoleLogHandler(log));
-      
-      var server = serverUrl || "https://eyes.applitools.com"; 
-      eyes.setServerUrl(server);
-
-      var key = apiKey || process.env.APPLITOOLS_API_KEY;
-      eyes.setApiKey(key);
-
-      var options = new ChromeOptions();
-      options.addArguments("--lang=en_US");
-
-      if (headless) {
-         var driver = new Builder().forBrowser('chrome').setChromeOptions(new ChromeOptions(options).headless()).build();
-      } else {
-         var driver = new Builder().forBrowser('chrome').setChromeOptions(options).build();
-      }
-    
-      var sessionId = await driver.getSession().then(function(session){
-         var sessionId = session.id_;
-         console.log('\nStarting Session: ', sessionId);
-         console.log('Navigating to Url: ', url + '\n'); 
-         return sessionId;
-      });
-      
-      var sleep = require('sleep');
-      var millSleep = Math.floor(Math.random() * Math.floor(1000));
-      sleep.msleep(millSleep);
-      
-      await driver.get(url);
-      sleep.msleep(1000);
-      
-      if (config.afterPageLoad) {
-         try {
-            for (var step in config.afterPageLoad) {
-               await eval(config.afterPageLoad[step]);
-               sleep.msleep(1000);
-            }
-         } catch(err) {
-            console.log("afterPageLoad Exception: " + err);
+   if (config.afterPageLoad) {
+      try {
+         for (var step in config.afterPageLoad) {
+            await eval(config.afterPageLoad[step]);
+            sleep.msleep(1000);
          }
+      } catch(err) {
+         console.log("afterPageLoad Exception: " + err);
       }
+   }
 
-      await driver.executeScript("window.scrollTo(0, document.body.scrollHeight);");
-      sleep.msleep(millSleep);
-      await driver.executeScript("window.scrollTo(0, 0);");
+   //lazyload page
+   await driver.executeScript("window.scrollTo(0, document.body.scrollHeight);");
+   sleep.msleep(millSleep);
+   await driver.executeScript("window.scrollTo(0, 0);");
 
-      if (appName === null) {
-         var path = require('path');
-         var app = path.basename(sitemapFile, '.xml');
-      } else {
-         var app = appName;
-      }
+   if (appName === null) {
+      //var app = path.basename(sitemapFile, '.xml');
+      var app = path.basename(sitemapFile, '.xml') || urlParser.parse(url).host;
+   } else {
+      var app = appName;
+   };
 
-      if (testName === null) {
-         var urlParser = require('url');
-         var test = urlParser.parse(url).path;
-      } else {
-         var test = testName;
-      }
-      
-      if (enableVisualGrid) {
+   if (testName === null) {
+      var test = urlParser.parse(url).path;
+   } else {
+      var test = testName;
+   };
 
-         const conf = {
-            appName: app,
-            testName: test,
-            serverUrl: server,
-            apiKey: key,
-            batch: {
-               id: myBatchId,
-               name: sitemapFile,
-			   },
-            browsersInfo: config.browsersInfo,
-         };
-               
-         eyes.setConfiguration(conf);
-         await eyes.open(driver);
-     	
-      } else {
-         
-         await eyes.open(driver, app, test);
-         
-      }
+   const batchInfo = new BatchInfo({
+      id: myBatchId,
+      name: batch,
+      sequenceName: "JS-Crawler",
+      notifyOnCompletion: true,
+    })
+
+   var conf = {
+      serverUrl: serverUrl,
+      apiKey: apiKey,
+      appName: app,
+      testName: test,
+      agentId: 'JS-Crawler',
+      setSendDom: false,
+      batch: batchInfo,
+      // // Batch: {
+      //    batchId: myBatchId,
+      //    batchName: batchName,
+      //    notifyOnCompletion: true,
+      // // },
+      browsersInfo: config.browsersInfo,
+   };
+
+   eyes.setConfiguration(conf);
+   eyes.setMatchLevel(eval('MatchLevel.' + level))
+   eyes.setLogHandler(new ConsoleLogHandler(log));
+
+   if (proxyUrl) {
+      var user = ',' + proxyUser || Null
+      var pass = ',' + proxyPass || Null
+      console.log('\nSet Proxy Values: ' + proxyUrl + user + pass + '\n');
+      eyes.setProxy(proxyUrl + user + pass)
+   };
+
+   try {  
+      await eyes.open(driver);
 
       if (enableFullPage) {
          await eyes.check(url, Target.window().fully());
@@ -174,33 +183,24 @@ async function browser(url) {
          await eyes.check(url, Target.window());
       }
       
-      if (enableVisualGrid) {
-         await eyes.getRunner().getAllTestResults();
-      } else {
-         await eyes.close();
-      }
+      await eyes.closeAsync(false);
 
    } catch(err) {
-      
       console.error('\n' + sessionId + ' Unhandled exception: ' + err.message);
-      console.log('Failed Test: ', url + '\n'); 
-
+      console.log('Failed Url: ', url, '\n'); 
    } finally {
-
-      console.log('\nFinished Session: ' + sessionId + ', url: ' + url + '\n'); 
-      try{ 
-         await driver.quit();
-         await eyes.abortIfNotClosed();
-      } catch(error) {
-         console.error('\nFinally Error: ', error + '\n'); 
-      }
+      console.log('\nFinished Session: ' + sessionId + ', url: ' + url + '\n');
+      const results = eyes.getRunner().getAllTestResults(false);
+      //console.log('\n' + results + '\n');
+      await eyes.abort();
+      await driver.quit();
    }
 }
 
 function millisToMinutesAndSeconds(millis) {
-  var minutes = Math.floor(millis / 60000);
-  var seconds = ((millis % 60000) / 1000).toFixed(0);
-  return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+   var minutes = Math.floor(millis / 60000);
+   var seconds = ((millis % 60000) / 1000).toFixed(0);
+   return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
 }
 
 const promiseProducer = () => {
@@ -221,17 +221,15 @@ const promiseProducer = () => {
 }
 
 function isInt(value) {
-   
    if (isNaN(value)) {
       return false;
    }
-  
    var x = parseFloat(value);
    return (x | 0) === x;
 }
 
 //Global variables
-var myBatchId = Math.round((new Date()).getTime() / 1000).toString();
+let myBatchId = Math.round((new Date()).getTime() / 1000).toString();
 console.log("My Applitools Batch ID: " + myBatchId)
 
 let apiKey = String;
@@ -245,11 +243,12 @@ let appName = String;
 let testName = String;
 let level = String;
 let enableFullPage = Boolean;
+let proxyUrl = String;
+let proxyUser = String;
+let proxyPass = String;
+let batch = String;
 
 async function crawler() {
-   
-   var program = require('commander');
-   
    program
    .version('0.1.0')
    .option('-u --url [url]', 'Add the site URL you want to generate a sitemap for. e.g. -u https://www.seleniumconf.com')
@@ -266,18 +265,22 @@ async function crawler() {
    .option('-a --appName [appName]', 'Override your appName. e.g. -a MyApp')
    .option('-t --testName [testName]', 'Override your testName. e.g. -t MyTest')
    .option('-l --level [level]', 'Set your Match Level "Layout2, Content, Strict, Exact" (Default: Strict). e.g. -l Layout2')
+   .option('-p --proxy [proxy]', 'Set your Proxy URL" (Default: None). e.g. -p http://proxyhost:port,username,password')
+   .option('-B --batch [batch]', 'Set your Batch Name" (Default: sitemap filename or url). e.g. -B MyBatch')
    .parse(process.argv);
    
-   apiKey = program.key
-   serverUrl = program.serverUrl
+   apiKey = program.key || config.apiKey;
+   serverUrl = program.serverUrl || config.serverUrl;
    enableVisualGrid = program.grid;
-   log = program.log;
+   log = program.log || config.logs;
    headless = program.headless;
-   appName = program.appName || null;
+   appName = program.appName || config.appName;
    testName = program.testName || null;
    level = program.level || 'Strict';
-   enableFullPage = program.fullPage;
-   
+   enableFullPage = program.fullPage || config.fullPage;
+   proxyUrl = program.proxy || null;
+   batch = 'jsc.' + program.batch || 'jsc.' + sitemapFile
+
    if (!isInt(program.browsers)) {
       program.browsers = 10;
    }
@@ -295,10 +298,16 @@ async function crawler() {
       process.exit();
    }
 
-   if (program.URL) {
+   if (program.proxy) {
+      var proxy = program.proxy.split(',')
+      proxyUrl = proxy[0];
+      proxyUser = proxy[1];
+      proxyPass = proxy[2];
+   }
 
-      var urlParser = require('url');
+   if (program.URL) {
       var host = urlParser.parse(program.URL).host;
+      batch = 'jsc.' + host
       sitemapFile = host;
       array = [program.URL];
 
@@ -307,23 +316,17 @@ async function crawler() {
       testName = null;
 
       if (program.sitemapUrl) {
-         
-         var urlParser = require('url');
          var host = urlParser.parse(program.sitemapUrl).host;
          sitemapFile = host;
          array = await sitemapArray('', program.sitemapUrl);
-      
       } else {
-         
          if (program.sitemap) {
             sitemapFile = program.sitemap
          } else {
             sitemapFile = await SitemapGenerator(program.url, 500);
          }
-         
          array = await sitemapArray(sitemapFile);
       }
-   
    }
    
    var start = new Date();
