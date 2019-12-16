@@ -64,19 +64,32 @@ Options:
    * ctrl-c only once and wait! This should put you in the FINALLY block to kill the execution and close all browsers. Repeated ctrl-c might break out of the his block and leave zombie browsers running on your pc which you'll have to manually kill. 
 
 ### Current VG Options:
-   * This can be modified in the config.js file.
+   * This can be modified in the applitools.config.js file.
 
 ```
-browsersInfo: [
-   { width: 1200, height: 800, name: 'firefox'             },
-   { width: 1200, height: 800, name: 'ie'                  },
-   { width: 1200, height: 800, name: 'edge'                },
-   { width: 1200, height: 800, name: 'chrome'              },
-   { deviceName: 'iPhone X', screenOrientation: 'portrait' },
-   { deviceName: 'iPad',     screenOrientation: 'portrait' },
-   { deviceName: 'Nexus 7',  screenOrientation: 'portrait' },
-   { deviceName: 'Pixel 2',  screenOrientation: 'portrait' }
-]
+    serverUrl: "https://eyesapi.applitools.com",
+    apiKey: process.env.APPLITOOLS_API_KEY,
+    fullPage: true,
+    logs: false,
+    sendDom: false,
+    proxy: null, //'http://localhost:8888,user,password',
+    browsersInfo: [
+        { width: 1200, height: 800, name: 'chrome'  },
+        { width: 1200, height: 800, name: 'firefox' },
+        { width: 1200, height: 800, name: 'ie10'    },
+        { width: 1200, height: 800, name: 'ie11'    },
+        { width: 1200, height: 800, name: 'edge'    },
+        { deviceName: 'iPhone X', screenOrientation: 'portrait' },
+        { deviceName: 'iPad',     screenOrientation: 'portrait' },
+        { deviceName: 'Nexus 7',  screenOrientation: 'portrait' },
+        { deviceName: 'Pixel 2',  screenOrientation: 'portrait' }
+     ],
+
+     //An Array of raw Selenium steps to take after the page loads... clicks, sendKeys, scroll etc...
+    //  afterPageLoad: [
+    //      "driver.findElement(By.css('span.cta-link.primary.link-text-yes')).click()",
+    //      "driver.findElement(By.css('div.cc-compliance')).click()"
+    //  ],
 ```
 
 ### ToDos:
