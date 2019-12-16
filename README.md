@@ -63,7 +63,7 @@ Options:
 * Quit during mid-execution:
    * ctrl-c only once and wait! This should put you in the FINALLY block to kill the execution and close all browsers. Repeated ctrl-c might break out of the his block and leave zombie browsers running on your pc which you'll have to manually kill. 
 
-### Current VG Options:
+### Config Options:
    * This can be modified in the applitools.config.js file.
 
 ```
