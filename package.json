@@ -1,5 +1,5 @@
 {
-  "name": "JS-Virtual-Grid-Crawler",
+  "name": "JS-Visual-Grid-Crawler",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -21,7 +21,8 @@
     "sitemap-to-array": "^6.0.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "crawl": "node crawler.js"
   },
   "author": "",
   "license": "ISC"

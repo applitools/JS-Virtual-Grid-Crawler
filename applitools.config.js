@@ -2,9 +2,10 @@ module.exports = {
     
     serverUrl: "https://eyesapi.applitools.com",
     apiKey: process.env.APPLITOOLS_API_KEY,
-    appName: 'JS-Crawler',
     fullPage: true,
     logs: false,
+    sendDom: false,
+    proxy: null, //'http://localhost:8888,user,password',
     browsersInfo: [
         { width: 1200, height: 800, name: 'chrome'  },
         { width: 1200, height: 800, name: 'firefox' },
