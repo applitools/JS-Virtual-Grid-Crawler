@@ -130,11 +130,7 @@ async function browser(url) {
       console.log('Navigating to Url: ', url + '\n'); 
       return sessionId;
    });
-   
-   //randomize a delay to make each thread/browser slightly timed different. 
-   var millSleep = Math.floor(Math.random() * Math.floor(1000));
-   //sleep.msleep(millSleep);
-   
+      
    await driver.get(url);
    
    if (config.afterPageLoad) {
@@ -167,7 +163,7 @@ async function browser(url) {
    const batchInfo = new BatchInfo({
       id: myBatchId,
       name: batch,
-      sequenceName: "JS-Crawler",
+      sequenceName: batch,
       notifyOnCompletion: true,
     });
 
