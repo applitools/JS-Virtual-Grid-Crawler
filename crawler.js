@@ -169,9 +169,9 @@ async function browser(url) {
    if (proxyUrl) {
       var proxy = proxyUrl.split(',');
       var pProtocol = urlParser.parse(proxy[0]).protocol;
-      var pHost = proxy[0].toString();
-      var pUser = proxy[1].toString() || null;
-      var pPass = proxy[2].toString() || null;
+      var pHost = proxy[0];
+      var pUser = proxy[1] || null;
+      var pPass = proxy[2] || null;
 
       if(pProtocol === 'http:') {
          var isHttpOnly = true;
