@@ -5,7 +5,8 @@ module.exports = {
     fullPage: true,
     logs: false,
     sendDom: false,
-    proxy: null, //'http://localhost:8888,user,password',
+    lazyLoad: true,
+    proxy: null, //'http://localhost:8888,yourUser,yourPassword',
     browsersInfo: [
         { width: 1200, height: 800, name: 'chrome'  },
         { width: 1200, height: 800, name: 'firefox' },

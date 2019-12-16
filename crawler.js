@@ -82,6 +82,27 @@ async function sitemapArray(sitemap, url = null) {
    });
 }
 
+async function getPageHeight(driver) {
+   var clientHeight = await driver.executeScript("return document.documentElement.clientHeight");
+   var bodyClientHeight = await driver.executeScript("return document.body.clientHeight");
+   var scrollHeight = await driver.executeScript("return document.documentElement.scrollHeight");
+   var bodyScrollHeight = await driver.executeScript("return document.body.scrollHeight");
+   var maxDocElementHeight = Math.max(clientHeight, scrollHeight);
+   var maxBodyHeight = Math.max(bodyClientHeight, bodyScrollHeight);
+   return Math.max(maxDocElementHeight, maxBodyHeight);
+};
+
+async function lazyLoadPage(driver) {
+   var height =  await driver.executeScript("return window.innerHeight");
+   var pageHeight = await getPageHeight(driver);
+   for (var j = 0; j < pageHeight; j += (height - 20)) {
+       await driver.executeScript("window.scrollTo(0," + j + ")");
+       sleep.msleep(500);
+       console.log("\nLAZY LOADING...\n")
+   }
+   await driver.executeScript("window.scrollTo(0, 0);");
+};
+
 async function browser(url) {
    const { Options: ChromeOptions } = require('selenium-webdriver/chrome');
 
@@ -112,7 +133,7 @@ async function browser(url) {
    
    //randomize a delay to make each thread/browser slightly timed different. 
    var millSleep = Math.floor(Math.random() * Math.floor(1000));
-   sleep.msleep(millSleep);
+   //sleep.msleep(millSleep);
    
    await driver.get(url);
    
@@ -127,10 +148,9 @@ async function browser(url) {
       }
    }
 
-   //lazyload page
-   await driver.executeScript("window.scrollTo(0, document.body.scrollHeight);");
-   sleep.msleep(millSleep);
-   await driver.executeScript("window.scrollTo(0, 0);");
+   if(lazyLoad) {
+      await lazyLoadPage(driver);
+   }
 
    if (appName === null) {
       var app = path.basename(sitemapFile, '.xml') || urlParser.parse(url).host;
@@ -166,32 +186,34 @@ async function browser(url) {
    eyes.setMatchLevel(eval('MatchLevel.' + level))
    eyes.setLogHandler(new ConsoleLogHandler(logs));
 
-   if (proxyUrl) {
-      var proxy = proxyUrl.split(',');
-      var pProtocol = urlParser.parse(proxy[0]).protocol;
-      var pHost = proxy[0];
-      var pUser = proxy[1] || null;
-      var pPass = proxy[2] || null;
+   try {  
 
-      if(pProtocol === 'http:') {
-         var isHttpOnly = true;
-      } else {
-         var isHttpOnly = false;
-      }
+      if (proxyUrl) {
+         var proxy = proxyUrl.split(',');
+         var pProtocol = urlParser.parse(proxy[0]).protocol;
+         var pHost = proxy[0];
+         var pUser = proxy[1] || null;
+         var pPass = proxy[2] || null;
 
-      var proxyInfo = {
-         url: pHost,
-         username: pUser, 
-         password: pPass, 
-         isHttpOnly: isHttpOnly
+         if(pProtocol === 'http:') {
+            var isHttpOnly = true;
+         } else {
+            var isHttpOnly = false;
+         }
+
+         var proxyInfo = {
+            url: pHost,
+            username: pUser, 
+            password: pPass, 
+            isHttpOnly: isHttpOnly
+         };
+
+         console.log("\nProxy Settings: ", pHost, pUser, pPass, isHttpOnly, "\n");
+         
+         eyes.setProxy(proxyInfo);
       };
 
-      console.log("\nProxy Settings: ", pHost, pUser, pPass, isHttpOnly, "\n");
-      
-      eyes.setProxy(proxyInfo);
-   };
-
-   try {  
+ 
       await eyes.open(driver);
 
       if (enableFullPage) {
@@ -262,6 +284,7 @@ let proxyUrl = String;
 let batch = String;
 let myEyes = Object;
 let sendDom = Boolean;
+let lazyLoad = Boolean;
 
 async function crawler() {
    program
@@ -295,6 +318,7 @@ async function crawler() {
    enableFullPage = program.fullPage || config.fullPage;
    proxyUrl = program.proxy || config.proxy || null;
    sendDom = config.sendDom;
+   lazyLoad = config.lazyLoad;
    
    if (!isInt(program.browsers)) {
       program.browsers = 10;
