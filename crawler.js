@@ -185,7 +185,7 @@ async function browser(url) {
       batch: batchInfo,
       browsersInfo: config.browsersInfo,
    };
-   
+
    eyes.setConfiguration(conf);
    eyes.setMatchLevel(eval('MatchLevel.' + level))
    eyes.setLogHandler(new ConsoleLogHandler(logs));
@@ -407,7 +407,7 @@ async function crawler() {
    const pool = new PromisePool(promiseProducer, program.browsers);
    await pool.start();
 
-   //await myEyes.getRunner().getAllTestResults(false);
+   await myEyes.getRunner().getAllTestResults(false);
 
    var finished = new Date();
    var diff = Math.abs(start - finished);
