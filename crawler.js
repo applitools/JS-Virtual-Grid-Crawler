@@ -120,10 +120,7 @@ async function browser(url) {
 
    if (headless) {
       options.addArguments("--headless")
-      //var driver = await new Builder().forBrowser('chrome').setChromeOptions(new ChromeOptions(options).headless()).build();
-   } else {
-     // var driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
-   }
+   } 
 
    var driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
 
@@ -135,7 +132,11 @@ async function browser(url) {
    });
       
    await driver.get(url);
-   
+
+   if(lazyLoad) {
+      await lazyLoadPage(driver);
+   }
+
    if (config.afterPageLoad) {
       try {
          for (var step in config.afterPageLoad) {
@@ -147,13 +148,8 @@ async function browser(url) {
       }
    }
 
-   if(lazyLoad) {
-      await lazyLoadPage(driver);
-   }
-
    if (appName === null) {
       var app = path.basename(sitemapFile, '.xml') || urlParser.parse(url).host;
-      //var app = urlParser.parse(url).host;
    } else {
       var app = appName;
    };
