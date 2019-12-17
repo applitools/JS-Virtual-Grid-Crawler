@@ -13,10 +13,11 @@ module.exports = {
         { width: 1200, height: 800, name: 'ie10'    },
         { width: 1200, height: 800, name: 'ie11'    },
         { width: 1200, height: 800, name: 'edge'    },
+        { width: 1200, height: 800, name: 'safari-1'},
         { deviceName: 'iPhone X', screenOrientation: 'portrait' },
         { deviceName: 'iPad',     screenOrientation: 'portrait' },
-        { deviceName: 'Nexus 7',  screenOrientation: 'portrait' },
-        { deviceName: 'Pixel 2',  screenOrientation: 'portrait' }
+        { deviceName: 'Nexus 7',  screenOrientation: 'landscape' },
+        { deviceName: 'Pixel 2',  screenOrientation: 'landscape' }
      ],
 
      //An Array of raw Selenium steps to take after the page loads... clicks, sendKeys, scroll etc...

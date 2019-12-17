@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://www.google.com/</loc>
+    <loc>https://www.google.com</loc>
   </url>
   <url>
     <loc>https://www.bing.com</loc>
@@ -9,14 +9,11 @@
   <url>
     <loc>https://www.duckduckgo.com</loc>
   </url>
-  <!-- <url>
+  <url>
     <loc>https://www.apple.com</loc>
   </url>
   <url>
     <loc>https://www.microsoft.com/</loc>
-  </url>
-  <url>
-    <loc>https://www.yahoo.com/</loc>
   </url>
   <url>
     <loc>https://www.applitools.com/</loc>
@@ -29,5 +26,5 @@
   </url>
   <url>
     <loc>https://golang.org/</loc>
-  </url> -->
+  </url>
 </urlset>

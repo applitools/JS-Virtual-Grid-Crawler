@@ -6,7 +6,7 @@
   "dependencies": {
     "chromedriver": "^78.0.1",
     "geckodriver": "^1.19.1",
-    "@applitools/eyes-selenium": "4.32.3",
+    "@applitools/eyes-selenium": "4.33.0",
     "npm": "^6.13.4",
     "selenium-webdriver": "4.0.0-alpha.4",
     "sleep": "^6.1.0",

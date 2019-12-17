@@ -119,10 +119,13 @@ async function browser(url) {
    options.addArguments("--lang=en_US");
 
    if (headless) {
-      var driver = await new Builder().forBrowser('chrome').setChromeOptions(new ChromeOptions(options).headless()).build();
+      options.addArguments("--headless")
+      //var driver = await new Builder().forBrowser('chrome').setChromeOptions(new ChromeOptions(options).headless()).build();
    } else {
-      var driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
+     // var driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
    }
+
+   var driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
 
    var sessionId = await driver.getSession().then(function(session){
       var sessionId = session.id_;
@@ -150,12 +153,17 @@ async function browser(url) {
 
    if (appName === null) {
       var app = path.basename(sitemapFile, '.xml') || urlParser.parse(url).host;
+      //var app = urlParser.parse(url).host;
    } else {
       var app = appName;
    };
 
    if (testName === null) {
-      var test = urlParser.parse(url).path;
+      if(duplicatePaths) {
+         var test = urlParser.parse(url).host;
+      } else {
+         var test = urlParser.parse(url).path;
+      }
    } else {
       var test = testName;
    };
@@ -177,7 +185,7 @@ async function browser(url) {
       batch: batchInfo,
       browsersInfo: config.browsersInfo,
    };
-
+   
    eyes.setConfiguration(conf);
    eyes.setMatchLevel(eval('MatchLevel.' + level))
    eyes.setLogHandler(new ConsoleLogHandler(logs));
@@ -209,7 +217,6 @@ async function browser(url) {
          eyes.setProxy(proxyInfo);
       };
 
- 
       await eyes.open(driver);
 
       if (enableFullPage) {
@@ -261,6 +268,10 @@ function isInt(value) {
    return (x | 0) === x;
 }
 
+function onlyUnique(value, index, self) { 
+   return self.indexOf(value) === index;
+}
+
 //Global variables
 let myBatchId = Math.round((new Date()).getTime() / 1000).toString();
 console.log("My Applitools Batch ID: " + myBatchId)
@@ -281,6 +292,7 @@ let batch = String;
 let myEyes = Object;
 let sendDom = Boolean;
 let lazyLoad = Boolean;
+let duplicatePaths = Boolean;
 
 async function crawler() {
    program
@@ -342,6 +354,10 @@ async function crawler() {
       }
       sitemapFile = host;
       array = [program.URL];
+      
+      if(!testName){
+         testName = host;
+      }
 
    } else {
       //disable test names when crawling sitemap.
@@ -366,6 +382,24 @@ async function crawler() {
          batch = 'jsc.' + path.basename(sitemapFile, '.xml') 
       }
    }
+
+   var urlPaths = {};
+   array.forEach(function(x) { urlPaths[urlParser.parse(x).path] = (urlPaths[urlParser.parse(x).path] || 0)+1; });
+   var pathValues = new Array();
+   for (var key in urlPaths) {
+      pathValues.push(urlPaths[key]);
+   }
+   var uniquePathValues = pathValues.filter(onlyUnique);
+
+   if(uniquePathValues[0] === 1 && uniquePathValues.length === 1) {
+      duplicatePaths = false;
+   } else {
+      duplicatePaths = true;
+   }
+
+   console.log('\nDuplicated URL Paths: ', duplicatePaths, '\n');
+
+   //await eval(pry.it)
    
    var start = new Date();
    console.log("\nStart Time: " + start + '\n');

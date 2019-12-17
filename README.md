@@ -46,7 +46,7 @@ Options:
 * Generate Sitemap and Run: `$ node crawler.js -u https://www.seleniumconf.com`
 * Use a sitemap.xml URL and Run: `$ node crawler.js -m https://slack.com/sitemap.xml -b 20 --headless`
 * Use existing sitemap.xml and Run: `$ node crawler.js -s ./sitemaps/www.seleniumconf.com.xml`
-* Use a self made sitemap and Run: `$ node crawler.js -s ./sitemaps/random-sitemap.xml`
+* Use a self made sitemap and Run: `$ node crawler.js -s ./sitemaps/random-sitemap.xml --appName random-urls`
 * Open 20 browsers concurrently (default: 10): `$ node crawler.js -s ./sitemaps/www.primerica.com.xml -b 20`
    * The max browsers by default is 10. However, if the sitemap.xml only has 5 links, then only 5 browsers will open.
    * ***Be careful with this value***. Opening too many browsers might kill your machine. Leave it at the default (10) and tweak this value slightly until you know the ideal number your machine can handle.
