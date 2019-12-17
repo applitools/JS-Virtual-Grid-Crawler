@@ -325,7 +325,7 @@ async function crawler() {
    level = program.level || 'Strict';
    enableFullPage = program.fullPage || config.fullPage;
    proxyUrl = program.proxy || config.proxy || null;
-   sendDom = config.sendDom;
+   sendDom = config.sendDom || false;
    lazyLoad = config.lazyLoad;
    
    if (!isInt(program.browsers)) {
