@@ -3,7 +3,7 @@
 ### Quickly collect screenshots of all your website pages and responsive viewports.
 
 # Disclaimer
-* This is a POC of using the Applitools Visual Grid and sitemap crawling a website. This is free for use, change/modify, and do whatever you please with it. This is crawler is **NOT SUPPORTED by Applitools** Support or Dev teams. It's use at your own discretion and is not guaranteed to work in the future. 
+* This is a POC of using the Applitools Visual Grid and sitemap crawling a website. This is free for use (with VG Subscription), change/modify, and do whatever you please with it. This is **NOT SUPPORTED by Applitools** Support or Dev teams. It's use at your own discretion and is not guaranteed to work in the future. 
 
 ### To Install:
 
