@@ -4,7 +4,7 @@ module.exports = {
     apiKey: process.env.APPLITOOLS_API_KEY,
     fullPage: true,
     logs: false,
-    sendDom: false, //Enable this for RCA (Root Cause Analysis).
+    sendDom: true, //Enable this for RCA (Root Cause Analysis).
     lazyLoad: true,
     proxy: null, //'http://localhost:8888,yourUser,yourPassword',
     browsersInfo: [

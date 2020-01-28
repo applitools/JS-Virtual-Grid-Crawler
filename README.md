@@ -24,8 +24,7 @@ Options:
   -m, --sitemapUrl [sitemapUrl  Specify a sitemap URL. e.g. -m https://www.example.com/sitemap.xml
   -b, --browsers [browsers]     Add the MAX number of browsers to run concurrently. e.g. -b 10. Note: Be careful with this!
   -k --key [key]                Set your Applitools API Key. e.g. -k yourLongAPIKeyyyyy
-  -v --serverUrl [serverUrl]    Set your Applitools on-prem or private cloud server URL. (Default: https://eyes.applitools.com). e.g. -v 
-                                https://youreyes.applitools.com
+  -v --serverUrl [serverUrl]    Set your Applitools server URL. (Default: https://eyesapi.applitools.com). e.g. -v  https://YourEyesapi.applitools.com
   --no-grid                     Disable the Visual Grid and run locally only (Default: false). e.g. --no-grid
   --logs                        Enable Applitools Debug Logs (Default: false). e.g. --logs
   --headless                    Run Chrome headless (Default: false). e.g. --headless

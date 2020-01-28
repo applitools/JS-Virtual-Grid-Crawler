@@ -178,13 +178,19 @@ async function browser(url) {
       testName: test,
       agentId: 'JS-Crawler',
       setSendDom: sendDom,
+      stitchMode: StitchMode.CSS,
       batch: batchInfo,
       browsersInfo: config.browsersInfo,
+      viewportSize: viewport
    };
 
    eyes.setConfiguration(conf);
    eyes.setMatchLevel(eval('MatchLevel.' + level))
    eyes.setLogHandler(new ConsoleLogHandler(logs));
+
+   if (environment) {
+      eyes.setBaselineEnvName(environment);
+   };
 
    try {  
 
@@ -289,6 +295,8 @@ let myEyes = Object;
 let sendDom = Boolean;
 let lazyLoad = Boolean;
 let duplicatePaths = Boolean;
+let viewport = Object;
+let environment = String;
 
 async function crawler() {
    program
@@ -298,7 +306,7 @@ async function crawler() {
    .option('-m, --sitemapUrl [sitemapUrl', 'Specify a sitemap URL. e.g. -m https://www.example.com/sitemap.xml')
    .option('-b, --browsers [browsers]', 'Add the MAX number of browsers to run concurrently. e.g. -b 10. Note: Be careful with this!', parseInt)
    .option('-k --key [key]', 'Set your Applitools API Key. e.g. -k yourLongAPIKeyyyyy')
-   .option('-v --serverUrl [serverUrl]', 'Set your Applitools on-prem or private cloud server URL. (Default: https://eyes.applitools.com). e.g. -v https://youreyes.applitools.com')
+   .option('-S --serverUrl [serverUrl]', 'Set your Applitools on-prem or private cloud server URL. (Default: https://eyes.applitools.com). e.g. -v https://youreyes.applitools.com')
    .option('--no-grid', 'Disable the Visual Grid and run locally only (Default: false). e.g. --no-grid')
    .option('--logs', 'Enable Applitools Debug Logs (Default: false). e.g. --logs')
    .option('--headless', 'Run Chrome headless (Default: false). e.g. --headless')
@@ -309,6 +317,8 @@ async function crawler() {
    .option('-l --level [level]', 'Set your Match Level "Layout2, Content, Strict, Exact" (Default: Strict). e.g. -l Layout2')
    .option('-p --proxy [proxy]', 'Set your Proxy URL" (Default: None). e.g. -p http://proxyhost:port,username,password')
    .option('-B --batch [batch]', 'Set your Batch Name" (Default: sitemap filename or url). e.g. -B MyBatch')
+   .option('-v --viewport [viewport]', 'Set your browser viewport" (Default: 800x600). e.g. -v 1200x600')
+   .option('-e --environment [environment]', 'Set a baseline environment name for cross-environment tests" (Default: none). e.g. -e "myEnvironment"')
    .parse(process.argv);
    
    apiKey = program.key || config.apiKey;
@@ -323,6 +333,7 @@ async function crawler() {
    proxyUrl = program.proxy || config.proxy || null;
    sendDom = config.sendDom || false;
    lazyLoad = config.lazyLoad;
+   environment = program.environment || null;
    
    if (!isInt(program.browsers)) {
       program.browsers = 10;
@@ -339,6 +350,13 @@ async function crawler() {
       console.log("\nUnknown Match Level: " + level);
       console.log("Please specify a valid Match Level: " + validMatchLevels + "\n");
       process.exit();
+   }
+
+   if (program.viewport) {
+      var vp = program.viewport.split('x');
+      viewport = { width: Number(vp[0]), height: Number(vp[1]) }
+   } else {
+      viewport = null;
    }
 
    if (program.URL) {
