@@ -4,20 +4,20 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "chromedriver": "^78.0.1",
-    "geckodriver": "^1.19.1",
-    "@applitools/eyes-selenium": "4.33.0",
-    "npm": "^6.13.4",
+    "chromedriver": "^89.0.0",
+    "geckodriver": "^1.22.3",
+    "@applitools/eyes-selenium": "4.53.0",
     "selenium-webdriver": "4.0.0-alpha.4",
-    "sleep": "^6.1.0",
-    "mocha": "^6.2.2",
-    "chai": "^4.2.0",
+    "npm": "^7.8.0",
+    "sleep": "^6.3.0",
+    "mocha": "^8.3.2",
+    "chai": "^4.3.4",
     "pryjs": "^1.0.3"
   },
   "devDependencies": {
-    "commander": "^4.0.1",
+    "commander": "4.0.1",
     "es6-promise-pool": "^2.5.0",
-    "sitemap-generator": "^8.4.2",
+    "sitemap-generator": "^8.5.1",
     "sitemap-to-array": "^6.0.0"
   },
   "scripts": {

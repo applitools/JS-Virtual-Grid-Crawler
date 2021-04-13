@@ -359,6 +359,8 @@ async function crawler() {
       viewport = null;
    }
 
+   console.log("MY URL: " + program.url)
+   
    if (program.URL) {
       var host = urlParser.parse(program.URL).host;
       if(program.batch) {
