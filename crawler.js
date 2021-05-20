@@ -31,10 +31,10 @@ const {
 
 async function SitemapGenerator(url, maxUrls) {
    
-   var host = urlParser.parse(url).host;
-   var filepath = './sitemaps/' + host + '.xml';
+   let host = urlParser.parse(url).host;
+   let filepath = './sitemaps/' + host + '.xml';
 
-   var generator = sitemap(url, {
+   let generator = sitemap(url, {
    	maxDepth: 0,
      	filepath: filepath,
      	stripQuerystring: true,
@@ -60,21 +60,21 @@ async function SitemapGenerator(url, maxUrls) {
 }
 
 async function sitemapArray(sitemap, url = null) {
-   var data;
+   let data;
    if (url === null) {
       console.log("Sitemap File: " + sitemap);
-      var data = fs.readFileSync(sitemap, 'utf-8');
+      let data = fs.readFileSync(sitemap, 'utf-8');
    } else {
       console.log("Sitemap Url: " + url);
-      var data = url;
+      let data = url;
    };
    
-   var sitemapUrls = [];
+   let sitemapUrls = [];
    const options = { returnOnComplete: true };
    
    return new Promise(async (resolve) => {
       await smta(data, options, (error, list) => {
-         for (var url in list) {
+         for (let url in list) {
             sitemapUrls.push(list[url].loc);
          }
          resolve(sitemapUrls);
@@ -83,19 +83,19 @@ async function sitemapArray(sitemap, url = null) {
 }
 
 async function getPageHeight(driver) {
-   var clientHeight = await driver.executeScript("return document.documentElement.clientHeight");
-   var bodyClientHeight = await driver.executeScript("return document.body.clientHeight");
-   var scrollHeight = await driver.executeScript("return document.documentElement.scrollHeight");
-   var bodyScrollHeight = await driver.executeScript("return document.body.scrollHeight");
-   var maxDocElementHeight = Math.max(clientHeight, scrollHeight);
-   var maxBodyHeight = Math.max(bodyClientHeight, bodyScrollHeight);
+   let clientHeight = await driver.executeScript("return document.documentElement.clientHeight");
+   let bodyClientHeight = await driver.executeScript("return document.body.clientHeight");
+   let scrollHeight = await driver.executeScript("return document.documentElement.scrollHeight");
+   let bodyScrollHeight = await driver.executeScript("return document.body.scrollHeight");
+   let maxDocElementHeight = Math.max(clientHeight, scrollHeight);
+   let maxBodyHeight = Math.max(bodyClientHeight, bodyScrollHeight);
    return Math.max(maxDocElementHeight, maxBodyHeight);
 };
 
 async function lazyLoadPage(driver) {
-   var height =  await driver.executeScript("return window.innerHeight");
-   var pageHeight = await getPageHeight(driver);
-   for (var j = 0; j < pageHeight; j += (height - 20)) {
+   let height =  await driver.executeScript("return window.innerHeight");
+   let pageHeight = await getPageHeight(driver);
+   for (let j = 0; j < pageHeight; j += (height - 20)) {
        await driver.executeScript("window.scrollTo(0," + j + ")");
        sleep.msleep(500);
        console.log("\nLAZY LOADING...\n")
@@ -107,25 +107,25 @@ async function browser(url) {
    const { Options: ChromeOptions } = require('selenium-webdriver/chrome');
 
    if (enableVisualGrid) {
-      var concurrency = config.browsersInfo.length || 10;
-      var eyes = new Eyes(new VisualGridRunner(concurrency));
+      let concurrency = config.browsersInfo.length || 10;
+      let eyes = new Eyes(new VisualGridRunner(concurrency));
    } else {
-      var eyes = new Eyes(new ClassicRunner());
+      let eyes = new Eyes(new ClassicRunner());
    }
 
    myEyes = eyes;
 
-   var options = new ChromeOptions();
+   let options = new ChromeOptions();
    options.addArguments("--lang=en_US");
 
    if (headless) {
       options.addArguments("--headless")
    } 
 
-   var driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
+   let driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
 
-   var sessionId = await driver.getSession().then(function(session){
-      var sessionId = session.id_;
+   let sessionId = await driver.getSession().then(function(session){
+      let sessionId = session.id_;
       console.log('\nStarting Session: ', sessionId);
       console.log('Navigating to Url: ', url + '\n'); 
       return sessionId;
@@ -139,7 +139,7 @@ async function browser(url) {
 
    if (config.afterPageLoad) {
       try {
-         for (var step in config.afterPageLoad) {
+         for (let step in config.afterPageLoad) {
             await eval(config.afterPageLoad[step]);
             sleep.msleep(1000);
          }
@@ -149,19 +149,20 @@ async function browser(url) {
    }
 
    if (appName === null) {
-      var app = path.basename(sitemapFile, '.xml') || urlParser.parse(url).host;
+      let app = path.basename(sitemapFile, '.xml') || urlParser.parse(url).host;
    } else {
-      var app = appName;
+      let app = appName;
    };
 
    if (testName === null) {
-      if(duplicatePaths) {
-         var test = urlParser.parse(url).host;
-      } else {
-         var test = urlParser.parse(url).path;
-      }
+      // if(duplicatePaths) {
+      //    let test = urlParser.parse(url).host;
+      // } else {
+      //    let test = urlParser.parse(url).path;
+      // }
+      let test = urlParser.parse(url).path;
    } else {
-      var test = testName;
+      let test = testName;
    };
 
    const batchInfo = new BatchInfo({
@@ -171,7 +172,7 @@ async function browser(url) {
       notifyOnCompletion: true,
     });
 
-   var conf = {
+   let conf = {
       serverUrl: serverUrl,
       apiKey: apiKey,
       appName: app,
@@ -186,7 +187,8 @@ async function browser(url) {
 
    eyes.setConfiguration(conf);
    eyes.setMatchLevel(eval('MatchLevel.' + level))
-   eyes.setLogHandler(new ConsoleLogHandler(logs));
+   //eyes.setLogHandler(new ConsoleLogHandler(logs));
+
 
    if (environment) {
       eyes.setBaselineEnvName(environment);
@@ -195,19 +197,19 @@ async function browser(url) {
    try {  
 
       if (proxyUrl) {
-         var proxy = proxyUrl.split(',');
-         var pProtocol = urlParser.parse(proxy[0]).protocol;
-         var pHost = proxy[0];
-         var pUser = proxy[1] || null;
-         var pPass = proxy[2] || null;
+         let proxy = proxyUrl.split(',');
+         let pProtocol = urlParser.parse(proxy[0]).protocol;
+         let pHost = proxy[0];
+         let pUser = proxy[1] || null;
+         let pPass = proxy[2] || null;
 
          if(pProtocol === 'http:') {
-            var isHttpOnly = true;
+            let isHttpOnly = true;
          } else {
-            var isHttpOnly = false;
+            let isHttpOnly = false;
          }
 
-         var proxyInfo = {
+         let proxyInfo = {
             url: pHost,
             username: pUser, 
             password: pPass, 
@@ -240,8 +242,8 @@ async function browser(url) {
 }
 
 function millisToMinutesAndSeconds(millis) {
-   var minutes = Math.floor(millis / 60000);
-   var seconds = ((millis % 60000) / 1000).toFixed(0);
+   let minutes = Math.floor(millis / 60000);
+   let seconds = ((millis % 60000) / 1000).toFixed(0);
    return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
 }
 
@@ -266,7 +268,7 @@ function isInt(value) {
    if (isNaN(value)) {
       return false;
    }
-   var x = parseFloat(value);
+   let x = parseFloat(value);
    return (x | 0) === x;
 }
 
@@ -274,7 +276,7 @@ function onlyUnique(value, index, self) {
    return self.indexOf(value) === index;
 }
 
-//Global variables
+//Global letiables
 let myBatchId = Math.round((new Date()).getTime() / 1000).toString();
 console.log("My Applitools Batch ID: " + myBatchId)
 
@@ -339,7 +341,7 @@ async function crawler() {
       program.browsers = 10;
    }
    
-   var validMatchLevels = [  
+   let validMatchLevels = [  
       'Layout2',
       'Content',
       'Strict',
@@ -353,7 +355,7 @@ async function crawler() {
    }
 
    if (program.viewport) {
-      var vp = program.viewport.split('x');
+      let vp = program.viewport.split('x');
       viewport = { width: Number(vp[0]), height: Number(vp[1]) }
    } else {
       viewport = null;
@@ -362,7 +364,7 @@ async function crawler() {
    console.log("MY URL: " + program.url)
    
    if (program.URL) {
-      var host = urlParser.parse(program.URL).host;
+      let host = urlParser.parse(program.URL).host;
       if(program.batch) {
          batch = 'jsc.' + program.batch
       } else {
@@ -380,7 +382,7 @@ async function crawler() {
       testName = null;
 
       if (program.sitemapUrl) {
-         var host = urlParser.parse(program.sitemapUrl).host;
+         let host = urlParser.parse(program.sitemapUrl).host;
          sitemapFile = host;
          array = await sitemapArray('', program.sitemapUrl);
       } else {
@@ -399,13 +401,13 @@ async function crawler() {
       }
    }
 
-   var urlPaths = {};
+   let urlPaths = {};
    array.forEach(function(x) { urlPaths[urlParser.parse(x).path] = (urlPaths[urlParser.parse(x).path] || 0)+1; });
-   var pathValues = new Array();
-   for (var key in urlPaths) {
+   let pathValues = new Array();
+   for (let key in urlPaths) {
       pathValues.push(urlPaths[key]);
    }
-   var uniquePathValues = pathValues.filter(onlyUnique);
+   let uniquePathValues = pathValues.filter(onlyUnique);
 
    if(uniquePathValues[0] === 1 && uniquePathValues.length === 1) {
       duplicatePaths = false;
@@ -417,7 +419,7 @@ async function crawler() {
 
    //await eval(pry.it)
    
-   var start = new Date();
+   let start = new Date();
    console.log("\nStart Time: " + start + '\n');
 
    const pool = new PromisePool(promiseProducer, program.browsers);
@@ -425,9 +427,9 @@ async function crawler() {
 
    await myEyes.getRunner().getAllTestResults(false);
 
-   var finished = new Date();
-   var diff = Math.abs(start - finished);
-   var duration = millisToMinutesAndSeconds(diff);
+   let finished = new Date();
+   let diff = Math.abs(start - finished);
+   let duration = millisToMinutesAndSeconds(diff);
    console.log("\nTotal Duration: " + duration + '\n');
 }
 

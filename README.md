@@ -40,7 +40,7 @@ Options:
 
 ### Examples:
 
-* Set an environment variable for your Applitools API Key. e.g. export APPLITOOLS_API_KEY="Your_API_KEY"
+* Set an environment letiable for your Applitools API Key. e.g. export APPLITOOLS_API_KEY="Your_API_KEY"
 
 * Generate Sitemap and Run: `$ node crawler.js -u https://www.seleniumconf.com`
 * Use a sitemap.xml URL and Run: `$ node crawler.js -m https://slack.com/sitemap.xml -b 20 --headless`
