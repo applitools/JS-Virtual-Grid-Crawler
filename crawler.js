@@ -60,21 +60,21 @@ async function SitemapGenerator(url, maxUrls) {
 }
 
 async function sitemapArray(sitemap, url = null) {
-   let data;
+   var data;
    if (url === null) {
       console.log("Sitemap File: " + sitemap);
-      let data = fs.readFileSync(sitemap, 'utf-8');
+      var data = fs.readFileSync(sitemap, 'utf-8');
    } else {
       console.log("Sitemap Url: " + url);
-      let data = url;
+      var data = url;
    };
    
-   let sitemapUrls = [];
+   var sitemapUrls = [];
    const options = { returnOnComplete: true };
    
    return new Promise(async (resolve) => {
       await smta(data, options, (error, list) => {
-         for (let url in list) {
+         for (var url in list) {
             sitemapUrls.push(list[url].loc);
          }
          resolve(sitemapUrls);
@@ -106,14 +106,7 @@ async function lazyLoadPage(driver) {
 async function browser(url) {
    const { Options: ChromeOptions } = require('selenium-webdriver/chrome');
 
-   if (enableVisualGrid) {
-      let concurrency = config.browsersInfo.length || 10;
-      let eyes = new Eyes(new VisualGridRunner(concurrency));
-   } else {
-      let eyes = new Eyes(new ClassicRunner());
-   }
-
-   myEyes = eyes;
+   const eyes = new Eyes(myRunner)
 
    let options = new ChromeOptions();
    options.addArguments("--lang=en_US");
@@ -147,11 +140,11 @@ async function browser(url) {
          console.log("afterPageLoad Exception: " + err);
       }
    }
-
+   
    if (appName === null) {
-      let app = path.basename(sitemapFile, '.xml') || urlParser.parse(url).host;
+      var app = path.basename(sitemapFile, '.xml') || urlParser.parse(url).host;
    } else {
-      let app = appName;
+      var app = appName;
    };
 
    if (testName === null) {
@@ -160,9 +153,9 @@ async function browser(url) {
       // } else {
       //    let test = urlParser.parse(url).path;
       // }
-      let test = urlParser.parse(url).path;
+      var test = urlParser.parse(url).path;
    } else {
-      let test = testName;
+      var test = testName;
    };
 
    const batchInfo = new BatchInfo({
@@ -172,20 +165,19 @@ async function browser(url) {
       notifyOnCompletion: true,
     });
 
-   let conf = {
-      serverUrl: serverUrl,
-      apiKey: apiKey,
-      appName: app,
-      testName: test,
-      agentId: 'JS-Crawler',
-      setSendDom: sendDom,
-      stitchMode: StitchMode.CSS,
-      batch: batchInfo,
-      browsersInfo: config.browsersInfo,
-      viewportSize: viewport
-   };
+   const configuration = eyes.getConfiguration();
+   configuration.setServerUrl(serverUrl)
+   configuration.setApiKey(apiKey)
+   configuration.setAgentId('JS-Crawler')
+   configuration.setBatch(batchInfo);
+   configuration.setAppName(app);
+   configuration.setTestName(test);
+   configuration.setDisableBrowserFetching(true);
+   configuration.setBrowsersInfo(config.browsersInfo)
+   configuration.setViewportSize(viewport)
+   configuration.setSendDom(sendDom)
 
-   eyes.setConfiguration(conf);
+   eyes.setConfiguration(configuration);
    eyes.setMatchLevel(eval('MatchLevel.' + level))
    //eyes.setLogHandler(new ConsoleLogHandler(logs));
 
@@ -229,10 +221,11 @@ async function browser(url) {
          await eyes.check(url, Target.window());
       }
       
-      await eyes.closeAsync();
+      //await eyes.closeAsync();
+      await eyes.close(false)
 
    } catch(err) {
-      console.error('\n' + sessionId + ' Unhandled exception: ' + err.message);
+      console.error('\n' + sessionId + ' Unhandled exception: ' + err);
       console.log('Failed Url: ', url, '\n'); 
    } finally {
       console.log('\nFinished Session: ' + sessionId + ', url: ' + url + '\n');
@@ -293,7 +286,7 @@ let level = String;
 let enableFullPage = Boolean;
 let proxyUrl = String;
 let batch = String;
-let myEyes = Object;
+let myRunner = Object;
 let sendDom = Boolean;
 let lazyLoad = Boolean;
 let duplicatePaths = Boolean;
@@ -361,8 +354,6 @@ async function crawler() {
       viewport = null;
    }
 
-   console.log("MY URL: " + program.url)
-   
    if (program.URL) {
       let host = urlParser.parse(program.URL).host;
       if(program.batch) {
@@ -389,6 +380,7 @@ async function crawler() {
          if (program.sitemap) {
             sitemapFile = program.sitemap;
          } else {
+            console.log("MY URL: " + program.url)
             sitemapFile = await SitemapGenerator(program.url, 500);
          }
          array = await sitemapArray(sitemapFile);
@@ -401,31 +393,38 @@ async function crawler() {
       }
    }
 
-   let urlPaths = {};
-   array.forEach(function(x) { urlPaths[urlParser.parse(x).path] = (urlPaths[urlParser.parse(x).path] || 0)+1; });
-   let pathValues = new Array();
-   for (let key in urlPaths) {
-      pathValues.push(urlPaths[key]);
-   }
-   let uniquePathValues = pathValues.filter(onlyUnique);
+   // let urlPaths = {};
+   // array.forEach(function(x) { urlPaths[urlParser.parse(x).path] = (urlPaths[urlParser.parse(x).path] || 0)+1; });
+   // let pathValues = new Array();
+   // for (let key in urlPaths) {
+   //    pathValues.push(urlPaths[key]);
+   // }
+   // let uniquePathValues = pathValues.filter(onlyUnique);
 
-   if(uniquePathValues[0] === 1 && uniquePathValues.length === 1) {
-      duplicatePaths = false;
-   } else {
-      duplicatePaths = true;
-   }
+   // if(uniquePathValues[0] === 1 && uniquePathValues.length === 1) {
+   //    duplicatePaths = false;
+   // } else {
+   //    duplicatePaths = true;
+   // }
 
-   console.log('\nDuplicated URL Paths: ', duplicatePaths, '\n');
+   // console.log('\nDuplicated URL Paths: ', duplicatePaths, '\n');
 
    //await eval(pry.it)
-   
+
+   if (enableVisualGrid) {
+      let concurrency = config.testConcurrency || config.browsersInfo.length || 10;
+      myRunner = new VisualGridRunner(concurrency);
+   } else {
+      myRunner = new ClassicRunner();
+   }
+ 
    let start = new Date();
    console.log("\nStart Time: " + start + '\n');
 
    const pool = new PromisePool(promiseProducer, program.browsers);
    await pool.start();
 
-   await myEyes.getRunner().getAllTestResults(false);
+   await myRunner.getAllTestResults(false);
 
    let finished = new Date();
    let diff = Math.abs(start - finished);

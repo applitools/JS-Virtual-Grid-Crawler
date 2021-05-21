@@ -4,14 +4,9 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "chromedriver": "^89.0.0",
-    "geckodriver": "^1.22.3",
-    "@applitools/eyes-selenium": "4.53.0",
-    "selenium-webdriver": "4.0.0-alpha.4",
-    "npm": "^7.8.0",
+    "@applitools/eyes-selenium": "^4.55.1",
+    "selenium-webdriver": "^4.0.0-beta.3",
     "sleep": "^6.3.0",
-    "mocha": "^8.3.2",
-    "chai": "^4.3.4",
     "pryjs": "^1.0.3"
   },
   "devDependencies": {
