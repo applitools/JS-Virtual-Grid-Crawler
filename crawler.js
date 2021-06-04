@@ -220,7 +220,7 @@ async function browser(url) {
       } else {
          await eyes.check(url, Target.window());
       }
-      
+
       await eyes.closeAsync();
 
    } catch(err) {
@@ -228,7 +228,7 @@ async function browser(url) {
       console.log('Failed Url: ', url, '\n'); 
    } finally {
       console.log('\nFinished Session: ' + sessionId + ', url: ' + url + '\n');
-      await eyes.abort();
+      await eyes.abortAsync();
       await driver.quit();
    }
 }
