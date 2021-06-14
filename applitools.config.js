@@ -12,7 +12,7 @@ module.exports = {
         { width: 1200, height: 800, name: 'firefox' },
         { width: 1200, height: 800, name: 'chrome'  },
         { width: 1200, height: 800, name: 'safari'  },
-        { width: 1200, height: 800, name: 'edge'    },
+        { width: 1200, height: 800, name: 'edgechromium'    },
         { deviceName: 'iPhone X', screenOrientation: 'portrait' },
         { deviceName: 'iPad',     screenOrientation: 'portrait' },
         { deviceName: 'Nexus 7',  screenOrientation: 'landscape' },
