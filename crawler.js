@@ -221,7 +221,9 @@ async function browser(url) {
          await eyes.check(url, Target.window());
       }
 
-      await eyes.closeAsync();
+      await eyes.closeAsync().catch((error) => {
+         console.log(`\nWhy is throwing this => ${error}\n`)
+      })
 
    } catch(err) {
       console.error('\n' + sessionId + ' Unhandled exception: ' + err);
