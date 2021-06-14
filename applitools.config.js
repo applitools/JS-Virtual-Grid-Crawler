@@ -7,11 +7,12 @@ module.exports = {
     sendDom: true, //Enable this for RCA (Root Cause Analysis).
     lazyLoad: true,
     proxy: null, //'http://localhost:8888,yourUser,yourPassword',
+    testConcurrency: 8,
     browsersInfo: [
-        { width: 1200, height: 800, name: 'chrome'  },
         { width: 1200, height: 800, name: 'firefox' },
-        { width: 1200, height: 800, name: 'edge'    },
+        { width: 1200, height: 800, name: 'chrome'  },
         { width: 1200, height: 800, name: 'safari'  },
+        { width: 1200, height: 800, name: 'edge'    },
         { deviceName: 'iPhone X', screenOrientation: 'portrait' },
         { deviceName: 'iPad',     screenOrientation: 'portrait' },
         { deviceName: 'Nexus 7',  screenOrientation: 'landscape' },
