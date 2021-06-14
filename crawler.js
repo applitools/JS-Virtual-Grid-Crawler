@@ -215,11 +215,10 @@ async function browser(url) {
 
       await eyes.open(driver);
 
-      if (enableFullPage) {
-         await eyes.check(url, Target.window().fully());
-      } else {
-         await eyes.check(url, Target.window());
-      }
+      let target = Target.window().enablePatterns(true).useDom(true)
+      
+      console.log("\nIs Full Page: " + enableFullPage)
+      await eyes.check(url, target.fully(enableFullPage))
 
       await eyes.closeAsync().catch((error) => {
          console.log(`\nWhy is throwing this => ${error}\n`)
@@ -306,7 +305,6 @@ async function crawler() {
    .option('--no-grid', 'Disable the Visual Grid and run locally only (Default: false). e.g. --no-grid')
    .option('--logs', 'Enable Applitools Debug Logs (Default: false). e.g. --logs')
    .option('--headless', 'Run Chrome headless (Default: false). e.g. --headless')
-   .option('--no-fullPage', 'Disable Full Page Screenshot (Default: full page). e.g. --no-fullPage')
    .option('-U --URL [URL]', 'Add a single web URL you want to capture images for. e.g. -U https://www.google.com')
    .option('-a --appName [appName]', 'Override the appName. e.g. -a MyApp')
    .option('-t --testName [testName]', 'Override the testName. e.g. -t MyTest')
@@ -325,7 +323,7 @@ async function crawler() {
    appName = program.appName || null;
    testName = program.testName || null;
    level = program.level || 'Strict';
-   enableFullPage = program.fullPage || config.fullPage;
+   enableFullPage = config.fullPage;
    proxyUrl = program.proxy || config.proxy || null;
    sendDom = config.sendDom || false;
    lazyLoad = config.lazyLoad;
