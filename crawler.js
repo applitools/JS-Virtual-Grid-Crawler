@@ -148,11 +148,6 @@ async function browser(url) {
    };
 
    if (testName === null) {
-      // if(duplicatePaths) {
-      //    let test = urlParser.parse(url).host;
-      // } else {
-      //    let test = urlParser.parse(url).path;
-      // }
       var test = urlParser.parse(url).path;
    } else {
       var test = testName;
@@ -222,9 +217,11 @@ async function browser(url) {
       console.log("\nIs Full Page: " + enableFullPage)
       await eyes.check(url, target.fully(enableFullPage))
 
-      await eyes.closeAsync().catch((error) => {
-         console.log(`\nWhy is throwing this => ${error}\n`)
-      })
+      await eyes.closeAsync();
+
+      // await eyes.closeAsync().catch((error) => {
+      //    console.log(`\nWhy is throwing this => ${error}\n`)
+      // })
 
    } catch(err) {
       console.error('\n' + sessionId + ' Unhandled exception: ' + err);

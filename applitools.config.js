@@ -2,7 +2,7 @@ module.exports = {
     
     serverUrl: "https://eyesapi.applitools.com",
     apiKey: process.env.APPLITOOLS_API_KEY,
-    fullPage: false,
+    fullPage: true,
     logs: true,
     sendDom: true, //Enable this for RCA (Root Cause Analysis).
     lazyLoad: true,
