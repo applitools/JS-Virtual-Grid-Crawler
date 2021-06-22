@@ -179,9 +179,11 @@ async function browser(url) {
 
    eyes.setConfiguration(configuration);
    eyes.setMatchLevel(eval('MatchLevel.' + level))
-   //eyes.setLogHandler(new ConsoleLogHandler(logs));
 
-
+   if (logs) {
+      eyes.setLogHandler(new ConsoleLogHandler(logs));
+   }
+   
    if (environment) {
       eyes.setBaselineEnvName(environment);
    };
@@ -212,7 +214,7 @@ async function browser(url) {
          
          eyes.setProxy(proxyInfo);
       };
-
+    
       await eyes.open(driver);
 
       let target = Target.window().enablePatterns(true).useDom(true)
@@ -391,24 +393,6 @@ async function crawler() {
          batch = 'jsc.' + path.basename(sitemapFile, '.xml') 
       }
    }
-
-   // let urlPaths = {};
-   // array.forEach(function(x) { urlPaths[urlParser.parse(x).path] = (urlPaths[urlParser.parse(x).path] || 0)+1; });
-   // let pathValues = new Array();
-   // for (let key in urlPaths) {
-   //    pathValues.push(urlPaths[key]);
-   // }
-   // let uniquePathValues = pathValues.filter(onlyUnique);
-
-   // if(uniquePathValues[0] === 1 && uniquePathValues.length === 1) {
-   //    duplicatePaths = false;
-   // } else {
-   //    duplicatePaths = true;
-   // }
-
-   // console.log('\nDuplicated URL Paths: ', duplicatePaths, '\n');
-
-   //await eval(pry.it)
 
    if (enableVisualGrid) {
       let concurrency = config.testConcurrency || config.browsersInfo.length || 10;
