@@ -103,6 +103,19 @@ async function lazyLoadPage(driver) {
    await driver.executeScript("window.scrollTo(0, 0);");
 };
 
+async function close(eyes){
+   let start = new Date();
+   console.log("\nStart Time: " + start + '\n');
+
+   await eyes.closeAsync();
+   //eyes.close(false);
+
+   let finished = new Date();
+   let diff = Math.abs(start - finished);
+   let duration = millisToMinutesAndSeconds(diff);
+   console.log("\nTotal Close Duration: " + duration + '\n');
+}
+
 async function browser(url) {
    const { Options: ChromeOptions } = require('selenium-webdriver/chrome');
 
@@ -154,7 +167,7 @@ async function browser(url) {
    };
 
    const batchInfo = new BatchInfo({
-      id: myBatchId,
+      id: proccess.env.APPLITOOLS_BATCH_ID || myBatchId,
       name: batch,
       sequenceName: batch,
       notifyOnCompletion: true,
@@ -217,11 +230,8 @@ async function browser(url) {
       console.log("\nIs Full Page: " + enableFullPage)
       await eyes.check(url, target.fully(enableFullPage))
 
-      await eyes.closeAsync();
-
-      // await eyes.closeAsync().catch((error) => {
-      //    console.log(`\nWhy is throwing this => ${error}\n`)
-      // })
+      //await eyes.closeAsync();
+      await close(eyes);
 
    } catch(err) {
       console.error('\n' + sessionId + ' Unhandled exception: ' + err);
@@ -393,7 +403,7 @@ async function crawler() {
 
    if (enableVisualGrid) {
       let concurrency = config.testConcurrency || config.browsersInfo.length || 10;
-      myRunner = new VisualGridRunner(concurrency);
+      myRunner = new VisualGridRunner({ testConcurrency: concurrency });
    } else {
       myRunner = new ClassicRunner();
    }
