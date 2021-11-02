@@ -4,30 +4,39 @@
     <loc>https://www.seleniumconf.com/</loc>
   </url>
   <url>
-    <loc>https://www.seleniumconf.com/2/</loc>
+    <loc>https://www.seleniumconf.com/features/overview</loc>
   </url>
   <url>
-    <loc>https://www.seleniumconf.com/code_of_conduct/</loc>
+    <loc>https://www.seleniumconf.com/features/particles</loc>
   </url>
   <url>
-    <loc>https://www.seleniumconf.com/london/2019/02/27/seconf-london-keynote-cfp/</loc>
+    <loc>https://www.seleniumconf.com/features/typography</loc>
   </url>
   <url>
-    <loc>https://www.seleniumconf.com/london/2019/02/27/accouncing-london/</loc>
+    <loc>https://www.seleniumconf.com/features/block-variations</loc>
   </url>
   <url>
-    <loc>https://www.seleniumconf.com/chicago/announcement/2018/07/30/seconf-chicago-lineup-announced/</loc>
+    <loc>https://www.seleniumconf.com/pages/about-us</loc>
   </url>
   <url>
-    <loc>https://www.seleniumconf.com/announcements/2018/03/22/speak-easy/</loc>
+    <loc>https://www.seleniumconf.com/pages/pricing</loc>
   </url>
   <url>
-    <loc>https://www.seleniumconf.com/announcements/2018/02/22/new-home-for-conference-sites/</loc>
+    <loc>https://www.seleniumconf.com/pages/portfolio</loc>
   </url>
   <url>
-    <loc>https://www.seleniumconf.com/berlin/playlist/2017/10/13/seconf-berlin-playlist/</loc>
+    <loc>https://www.seleniumconf.com/pages/contact</loc>
   </url>
   <url>
-    <loc>https://www.seleniumconf.com/austin/playlist/2017/04/07/seconf-austin-playlist/</loc>
+    <loc>https://www.seleniumconf.com/pages/coming-soon</loc>
+  </url>
+  <url>
+    <loc>https://www.seleniumconf.com/pages/offline</loc>
+  </url>
+  <url>
+    <loc>https://www.seleniumconf.com/conferences/2020/chicago</loc>
+  </url>
+  <url>
+    <loc>https://www.seleniumconf.com/code-of-conduct</loc>
   </url>
 </urlset>

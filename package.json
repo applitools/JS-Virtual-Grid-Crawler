@@ -4,10 +4,12 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@applitools/eyes-selenium": "^4.55.3",
-    "selenium-webdriver": "^3.6.0",
-    "sleep": "^6.3.0",
-    "pryjs": "^1.0.3"
+    "@applitools/eyes-selenium": "^4.56.5",
+    "@loadmill/node-recorder": "^0.3.35",
+    "express": "^4.17.1",
+    "pryjs": "^1.0.3",
+    "selenium-webdriver": "4.0.0-alpha.3",
+    "sleep": "^6.3.0"
   },
   "devDependencies": {
     "commander": "4.0.1",

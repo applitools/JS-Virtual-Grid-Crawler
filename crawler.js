@@ -8,9 +8,7 @@ const smta = require('sitemap-to-array');
 const path = require('path');
 const sleep = require('sleep');
 const program = require('commander');
-const config = require('./applitools.config.js');
 const PromisePool = require('es6-promise-pool');
-
 const {Builder, By, until, Capabilities} = require('selenium-webdriver');
 const { 
    Eyes, 
@@ -20,14 +18,11 @@ const {
    ConsoleLogHandler,
    ProxySettings, 
    Configuration, 
-   BrowserType, 
-   DeviceName, 
-   ScreenOrientation, 
    BatchInfo,
    StitchMode,
    TestResults,
-   MatchLevel
-} = require('@applitools/eyes-selenium');
+   MatchLevel} = require('@applitools/eyes-selenium');
+const config = require('./applitools.config.js');
 
 async function SitemapGenerator(url, maxUrls) {
    
@@ -122,13 +117,34 @@ async function browser(url) {
    const eyes = new Eyes(myRunner)
 
    let options = new ChromeOptions();
+
    options.addArguments("--lang=en_US");
 
    if (headless) {
       options.addArguments("--headless")
    } 
 
-   let driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
+   if (remoteUrl && remoteUrl.includes("saucelabs")) {
+      var capabilities = {
+         browserName: 'chrome',
+         browserVersion: 'latest',
+         platformName: 'Windows 10',
+         'sauce:options': {
+            screenResolution: '2560x1600',
+         }
+      }
+   } else {
+      var capabilities = {
+         browserName: 'chrome'
+      }
+   }
+
+   let driver = await new Builder()
+        .usingServer(remoteUrl)
+        .forBrowser('chrome')
+        .setChromeOptions(options)
+        .withCapabilities(capabilities)
+        .build();
 
    let sessionId = await driver.getSession().then(function(session){
       let sessionId = session.id_;
@@ -167,7 +183,7 @@ async function browser(url) {
    };
 
    const batchInfo = new BatchInfo({
-      id: proccess.env.APPLITOOLS_BATCH_ID || myBatchId,
+      id: process.env.APPLITOOLS_BATCH_ID || myBatchId,
       name: batch,
       sequenceName: batch,
       notifyOnCompletion: true,
@@ -301,6 +317,7 @@ let lazyLoad = Boolean;
 let duplicatePaths = Boolean;
 let viewport = Object;
 let environment = String;
+let remoteUrl = String;
 
 async function crawler() {
    program
@@ -337,6 +354,7 @@ async function crawler() {
    sendDom = config.sendDom || false;
    lazyLoad = config.lazyLoad;
    environment = program.environment || null;
+   remoteUrl = config.remoteUrl || null;
    
    if (!isInt(program.browsers)) {
       program.browsers = 10;

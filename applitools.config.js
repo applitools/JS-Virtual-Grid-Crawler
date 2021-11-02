@@ -1,9 +1,18 @@
+const {
+    IosDeviceName, 
+    ScreenOrientation, 
+    IosVersion,
+    BrowserType, 
+    DeviceName
+} = require('@applitools/eyes-selenium')
+
 module.exports = {
     
     serverUrl: "https://eyesapi.applitools.com",
     apiKey: process.env.APPLITOOLS_API_KEY,
+    remoteUrl: null,
     fullPage: true,
-    logs: true,
+    logs: false,
     sendDom: true, //Enable this for RCA (Root Cause Analysis).
     lazyLoad: true,
     proxy: null, //'http://localhost:8888,yourUser,yourPassword',
@@ -13,10 +22,10 @@ module.exports = {
         { width: 1200, height: 800, name: 'chrome'  },
         { width: 1200, height: 800, name: 'safari'  },
         { width: 1200, height: 800, name: 'edgechromium'    },
-        { deviceName: 'iPhone X', screenOrientation: 'portrait' },
         { deviceName: 'iPad',     screenOrientation: 'portrait' },
         { deviceName: 'Nexus 7',  screenOrientation: 'landscape' },
-        { deviceName: 'Pixel 2',  screenOrientation: 'landscape' }
+        { deviceName: 'Pixel 2',  screenOrientation: 'landscape' },
+        {iosDeviceInfo: {deviceName: IosDeviceName.iPhone_11} },
      ],
     
     // This is experimental...
