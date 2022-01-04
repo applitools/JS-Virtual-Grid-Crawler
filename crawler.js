@@ -200,6 +200,7 @@ async function browser(url) {
    configuration.setBrowsersInfo(config.browsersInfo)
    configuration.setViewportSize(viewport)
    configuration.setSendDom(sendDom)
+   configuration.setIgnoreDisplacements(false)
 
    eyes.setConfiguration(configuration);
    eyes.setMatchLevel(eval('MatchLevel.' + level))
@@ -364,7 +365,8 @@ async function crawler() {
       'Layout2',
       'Content',
       'Strict',
-      'Exact'
+      'Exact',
+      'None'
    ]
 
    if (!validMatchLevels.includes(level)) {
