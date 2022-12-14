@@ -6,7 +6,7 @@
   "dependencies": {
     "@applitools/eyes-selenium": "^4.56.5",
     "@loadmill/node-recorder": "^0.3.35",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "pryjs": "^1.0.3",
     "selenium-webdriver": "4.0.0-alpha.3",
     "sleep": "^6.3.0"
